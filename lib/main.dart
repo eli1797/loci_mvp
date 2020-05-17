@@ -9,8 +9,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Loci',
       theme: ThemeData(
+
         visualDensity: VisualDensity.adaptivePlatformDensity
       ),
       home: MyCustomForm(),
@@ -33,6 +35,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   //
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
@@ -40,19 +43,13 @@ class MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/neon-handshake.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Column(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text('Spontaneously Meet Friends'),
+      ),
+      body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              height: 200,
-            ),
             Form(
               key: _formKey,
               child: Column(
@@ -61,11 +58,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TextFormField(
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            hintText: 'Your name',
-                          hintStyle: TextStyle(color: Colors.white)),
+                        decoration: InputDecoration(hintText: 'Your name'),
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Enter your name';
@@ -82,7 +75,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         // otherwise.
                         if (_formKey.currentState.validate()) {
                           // If the form is valid, display a Snackbar.
-                          Scaffold.of(context).showSnackBar(
+                          _scaffoldKey.currentState.showSnackBar(
                               SnackBar(content: Text(_nameController.text)));
                         }
                       },
@@ -94,7 +87,6 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           ],
         ),
-      ),
       );
   }
 }
