@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,9 +36,11 @@ class MyCustomFormState extends State<MyCustomForm> {
   //
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _nameController = TextEditingController();
+
+  Position _currentPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +78,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                         // otherwise.
                         if (_formKey.currentState.validate()) {
                           // If the form is valid, display a Snackbar.
+                          _getCurrentLocation();
                           _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(content: Text(_nameController.text)));
+                              SnackBar(content: Text(
+                                  _nameController.text + ' is at LAT: ${_currentPosition.latitude}, LNG: ${_currentPosition.longitude}'),));
+
                         }
                       },
                       child: Text('Submit'),
@@ -88,5 +94,19 @@ class MyCustomFormState extends State<MyCustomForm> {
           ],
         ),
       );
+  }
+
+  void _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 }
