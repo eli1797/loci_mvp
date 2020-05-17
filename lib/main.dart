@@ -11,15 +11,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Loci',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        visualDensity: VisualDensity.adaptivePlatformDensity
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Spontaneously Meet Friends'),
-        ),
-        body: MyCustomForm(),
-      ),
+      home: MyCustomForm(),
     );
   }
 }
@@ -45,40 +39,62 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextFormField(
-                decoration: InputDecoration(hintText: 'Your name'),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Enter your name';
-                  }
-                  return null;
-                },
-                controller: _nameController),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/neon-handshake.jpg"),
+            fit: BoxFit.cover,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, or false
-                // otherwise.
-                if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a Snackbar.
-                  Scaffold.of(context).showSnackBar(
-                      SnackBar(content: Text(_nameController.text)));
-                }
-              },
-              child: Text('Submit'),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 200,
             ),
-          ),
-        ],
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextFormField(
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            hintText: 'Your name',
+                          hintStyle: TextStyle(color: Colors.white)),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Enter your name';
+                          }
+                          return null;
+                        },
+                        controller: _nameController),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: RaisedButton(
+                      onPressed: () {
+                        // Validate returns true if the form is valid, or false
+                        // otherwise.
+                        if (_formKey.currentState.validate()) {
+                          // If the form is valid, display a Snackbar.
+                          Scaffold.of(context).showSnackBar(
+                              SnackBar(content: Text(_nameController.text)));
+                        }
+                      },
+                      child: Text('Submit'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+      );
   }
 }
