@@ -14,65 +14,70 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Meet'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Spontaneously Meet Friends'),
+        ),
+        body: MyCustomForm(),
       ),
-      body: MyCustomForm(),
     );
   }
 }
 
-// Define a custom Form widget.
+// Create a Form widget.
 class MyCustomForm extends StatefulWidget {
   @override
-  _MyCustomFormState createState() => _MyCustomFormState();
+  MyCustomFormState createState() {
+    return MyCustomFormState();
+  }
 }
 
-// Define a corresponding State class.
-// This class holds the data related to the Form.
-class _MyCustomFormState extends State<MyCustomForm> {
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
-  final myController = TextEditingController();
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    myController.dispose();
-    super.dispose();
-  }
+// Create a corresponding State class holding data related to the form.
+class MyCustomFormState extends State<MyCustomForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a GlobalKey<FormState>,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextField(
-          decoration: InputDecoration(
-            hintText: 'Your Name'
+    // Build a Form widget using the _formKey created above.
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextFormField(
+                decoration: InputDecoration(hintText: 'Your name'),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Enter your name';
+                  }
+                  return null;
+                },
+                controller: _nameController),
           ),
-          controller: myController,
-
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: RaisedButton(
+              onPressed: () {
+                // Validate returns true if the form is valid, or false
+                // otherwise.
+                if (_formKey.currentState.validate()) {
+                  // If the form is valid, display a Snackbar.
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text(_nameController.text)));
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ),
+        ],
       ),
     );
   }
