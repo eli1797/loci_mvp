@@ -97,7 +97,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   void _getCurrentLocation() {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    final Geolocator geolocator = Geolocator();
 
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
