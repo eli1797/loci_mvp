@@ -40,7 +40,22 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _nameController = TextEditingController();
 
+  final Geolocator _geolocator = Geolocator();
   Position _currentPosition;
+
+  @protected
+  @mustCallSuper
+  void initState() {
+    super.initState();
+    _checkPermission();
+    _getCurrentLocation();
+  }
+
+  void _checkPermission() {
+    _geolocator.checkGeolocationPermissionStatus().then((status) { print('status: $status'); });
+    _geolocator.checkGeolocationPermissionStatus(locationPermission: GeolocationPermission.locationAlways).then((status) { print('always status: $status'); });
+    _geolocator.checkGeolocationPermissionStatus(locationPermission: GeolocationPermission.locationWhenInUse)..then((status) { print('whenInUse status: $status'); });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +111,9 @@ class MyCustomFormState extends State<MyCustomForm> {
       );
   }
 
-  void _getCurrentLocation() {
-    final Geolocator geolocator = Geolocator();
+  void _getCurrentLocation() async{
 
-    geolocator
+    await _geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
