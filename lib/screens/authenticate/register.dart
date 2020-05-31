@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvp/services/auth.dart';
+import 'package:mvp/shared/loading.dart';
 
 class Register extends StatefulWidget {
 
@@ -14,6 +15,7 @@ class _RegisterState extends State<Register> {
 
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
 
   // text field states
   String _email = '';
@@ -22,7 +24,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -84,9 +86,13 @@ class _RegisterState extends State<Register> {
                   child: Text('Register'),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
+                      setState(() => _loading = true);
                       dynamic result = await _authService.registerEmailPass(_email, _password);
                       if (result == null) {
-                        setState(() => error = 'Please supply a valid email');
+                        setState(() {
+                          error = 'Please supply a valid email';
+                          _loading = false;
+                        });
                       }
                     }
                   }),

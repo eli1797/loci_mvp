@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mvp/screens/authenticate/register.dart';
 import 'package:mvp/services/auth.dart';
+import 'package:mvp/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -15,6 +16,7 @@ class _SignInState extends State<SignIn> {
 
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
 
   // text field states
   String _email = '';
@@ -23,7 +25,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -76,16 +78,20 @@ class _SignInState extends State<SignIn> {
               ),
               SizedBox(height: 20.0),
               RaisedButton(
-                  color:  Colors.blue,
-                  child: Text('Sign In'),
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      dynamic result = await _authService.signInEmailPass(_email, _password);
-                      if (result == null) {
-                        setState(() => error = 'Failed login. Incorrect credentials');
-                      }
+                color:  Colors.blue,
+                child: Text('Sign In'),
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    setState(() => _loading = true);
+                    dynamic result = await _authService.signInEmailPass(_email, _password);
+                    if (result == null) {
+                      setState(() {
+                        error = 'Failed login. Incorrect credentials';
+                        _loading = false;
+                      });
                     }
-                  }),
+                  }
+                }),
               Text(
                 error,
                 style: TextStyle(color:  Colors.red, fontSize: 12.0),
