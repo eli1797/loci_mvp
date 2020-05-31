@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "802677356575",
+    "firebase_url": "https://locimvp-f563b.firebaseio.com",
+    "project_id": "locimvp-f563b",
+    "storage_bucket": "locimvp-f563b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802677356575:android:9360d38ffd993dfe343d2a",
+        "android_client_info": {
+          "package_name": "loci.mvp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802677356575-8rad8olpvu225ekmbgiteijfsrgqi2n3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG7iwhen7X5QOEMy_StkyToQAiTFwvDG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802677356575-8rad8olpvu225ekmbgiteijfsrgqi2n3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
