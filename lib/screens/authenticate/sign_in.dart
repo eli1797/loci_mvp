@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mvp/screens/authenticate/register.dart';
 import 'package:mvp/services/auth.dart';
 
 class SignIn extends StatefulWidget {
+
+  final Function toggleView;
+  SignIn({ this.toggleView });
+
   @override
   _SignInState createState() => _SignInState();
 }
@@ -58,7 +63,13 @@ class _SignInState extends State<SignIn> {
                   onPressed: () async {
                     print(_email);
                     print(_password);
-                  })
+                  }),
+              SizedBox(height: 10.0),
+              FlatButton(
+                  child: Text('Need an account? Register'),
+                  onPressed: () {
+                    widget.toggleView();
+                  }),
             ],
           ),
         ),
