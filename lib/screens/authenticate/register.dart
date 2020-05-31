@@ -40,6 +40,9 @@ class _RegisterState extends State<Register> {
               TextFormField(
                   decoration: const InputDecoration(
                     hintText: "Email",
+//                    enabledBorder: OutlineInputBorder(
+//                      borderSide: BorderSide(color: Colors.blue, width: 2.0)
+//                    ),
                   ),
                   validator: (val) {
                     if (val.isEmpty) {
@@ -91,7 +94,7 @@ class _RegisterState extends State<Register> {
                 error,
                 style: TextStyle(color:  Colors.red, fontSize: 12.0),
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 5.0),
               FlatButton(
                  child: Text('Already have an account? Sign in'),
                   onPressed: () {

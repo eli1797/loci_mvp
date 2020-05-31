@@ -14,10 +14,12 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   final AuthService _authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field states
   String _email = '';
   String _password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +34,21 @@ class _SignInState extends State<SignIn> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: "Email",
-                  ),
+                decoration: const InputDecoration(
+                  hintText: "Email",
+                ),
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return 'Enter your email';
+                  } else {
+                    return null;
+                  }
+                },
                 onChanged: (val) {
                   setState(() {
                     _email = val;
@@ -50,6 +60,13 @@ class _SignInState extends State<SignIn> {
                 decoration: const InputDecoration(
                   hintText: "Password",
                 ),
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return 'Enter your password';
+                  } else {
+                    return null;
+                  }
+                },
                 obscureText: true,
                 onChanged: (val) {
                   setState(() {
@@ -62,10 +79,18 @@ class _SignInState extends State<SignIn> {
                   color:  Colors.blue,
                   child: Text('Sign In'),
                   onPressed: () async {
-                    print(_email);
-                    print(_password);
+                    if (_formKey.currentState.validate()) {
+                      dynamic result = await _authService.signInEmailPass(_email, _password);
+                      if (result == null) {
+                        setState(() => error = 'Failed login. Incorrect credentials');
+                      }
+                    }
                   }),
-              SizedBox(height: 10.0),
+              Text(
+                error,
+                style: TextStyle(color:  Colors.red, fontSize: 12.0),
+              ),
+              SizedBox(height: 5.0),
               FlatButton(
                   child: Text('Need an account? Register'),
                   onPressed: () {
