@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mvp/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
 
   final AuthService _authService = AuthService();
 
@@ -21,7 +21,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         elevation: 0.0,
-        title: Text('Sign in'),
+        title: Text('Register'),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -33,28 +33,28 @@ class _SignInState extends State<SignIn> {
                   decoration: const InputDecoration(
                     hintText: "Email",
                   ),
-                onChanged: (val) {
-                  setState(() {
-                    _email = val;
-                  });
-                }
+                  onChanged: (val) {
+                    setState(() {
+                      _email = val;
+                    });
+                  }
               ),
               SizedBox(height: 20.0),
               TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Password",
-                ),
-                obscureText: true,
-                onChanged: (val) {
-                  setState(() {
-                    _password = val;
-                  });
-                }
+                  decoration: const InputDecoration(
+                    hintText: "Password",
+                  ),
+                  obscureText: true,
+                  onChanged: (val) {
+                    setState(() {
+                      _password = val;
+                    });
+                  }
               ),
               SizedBox(height: 20.0),
               RaisedButton(
                   color:  Colors.blue,
-                  child: Text('Sign In'),
+                  child: Text('Register'),
                   onPressed: () async {
                     print(_email);
                     print(_password);
