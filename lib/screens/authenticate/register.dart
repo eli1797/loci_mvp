@@ -13,14 +13,17 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
 
   final AuthService _authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field states
   String _email = '';
   String _password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -30,6 +33,7 @@ class _RegisterState extends State<Register> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(height: 20.0),
@@ -37,6 +41,13 @@ class _RegisterState extends State<Register> {
                   decoration: const InputDecoration(
                     hintText: "Email",
                   ),
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return 'Enter a email';
+                    } else {
+                      return null;
+                    }
+                  },
                   onChanged: (val) {
                     setState(() {
                       _email = val;
@@ -48,6 +59,15 @@ class _RegisterState extends State<Register> {
                   decoration: const InputDecoration(
                     hintText: "Password",
                   ),
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return 'Enter a password';
+                    } else if (val.length < 6) {
+                      return 'Enter an password longer than 6 characters';
+                    } else {
+                      return null;
+                    }
+                  },
                   obscureText: true,
                   onChanged: (val) {
                     setState(() {
@@ -60,9 +80,17 @@ class _RegisterState extends State<Register> {
                   color:  Colors.blue,
                   child: Text('Register'),
                   onPressed: () async {
-                    print(_email);
-                    print(_password);
+                    if (_formKey.currentState.validate()) {
+                      dynamic result = await _authService.registerEmailPass(_email, _password);
+                      if (result == null) {
+                        setState(() => error = 'Please supply a valid email');
+                      }
+                    }
                   }),
+              Text(
+                error,
+                style: TextStyle(color:  Colors.red, fontSize: 12.0),
+              ),
               SizedBox(height: 10.0),
               FlatButton(
                  child: Text('Already have an account? Sign in'),
