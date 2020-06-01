@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvp/screens/wrapper.dart';
 import 'package:mvp/services/auth.dart';
-import 'package:mvp/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:mvp/models/user.dart';
 
