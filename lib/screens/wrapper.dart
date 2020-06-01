@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home.dart';
+import 'package:mvp/screens/profile/first_time_setup.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -14,7 +15,17 @@ class Wrapper extends StatelessWidget {
     final user = Provider.of<User>(context);
     print(user);
 
+    bool profileSetup = false;
+
     //return either home or authenticate widget based on auth state
-    return user == null ? Authenticate() : Home();
+//    return user == null ? Authenticate() : Home();
+
+    if (user == null) {
+      return Authenticate();
+    } else if (!profileSetup) {
+      return FirstTimeSetup();
+    } else {
+      return Home();
+    }
   }
 }
