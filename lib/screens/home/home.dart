@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mvp/models/brew.dart';
-import 'package:mvp/screens/home/brew_list.dart';
+import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/home/settings_form.dart';
+import 'package:mvp/screens/profile/first_time_setup.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
+import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 
@@ -15,16 +16,13 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-//    void _showSettingsPanel() {
-//      showModalBottomSheet(context: context, builder: (context) {
-//        return Container(
-//          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-//          child: SettingsForm()
-//        );
-//      });
-//    }
+    final userData = Provider.of<DocumentSnapshot>(context);
+    print(userData);
 
-    return Scaffold(
+    if (userData == null || (userData.exists && userData.data['firstName'] == "new_unnamed_member")) {
+      return FirstTimeSetup();
+    } else {
+      return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Loci'),
@@ -44,7 +42,7 @@ class Home extends StatelessWidget {
           ],
         ),
         body: Text('Hello world'),
-    );
+      );
+    }
   }
 }
-

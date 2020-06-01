@@ -25,8 +25,8 @@
 //    final user = Provider.of<User>(context);
 //
 //    return StreamBuilder<UserData>(
-//      stream: DatabaseService(uid: user.uid).userData,
-//      builder: (context, snapshot) {
+////      stream: DatabaseService(uid: user.uid).userData,
+////      builder: (context, snapshot) {
 //
 //        if(snapshot.hasData) {
 //

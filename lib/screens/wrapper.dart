@@ -1,31 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home.dart';
 import 'package:mvp/screens/profile/first_time_setup.dart';
+import 'package:mvp/services/database.dart';
 import 'package:provider/provider.dart';
 
 /*
 Wrapper listens for auth changes and chooses what to show accordingly
  */
 class Wrapper extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
 
     final user = Provider.of<User>(context);
     print(user);
 
-    bool profileSetup = false;
-
-    //return either home or authenticate widget based on auth state
-//    return user == null ? Authenticate() : Home();
+    //@Todo: show the home or the firstTimeSetup screen based on if the user has set a firstName
 
     if (user == null) {
       return Authenticate();
-    } else if (!profileSetup) {
-      return FirstTimeSetup();
     } else {
-      return Home();
+      return StreamProvider<DocumentSnapshot> (
+        create: (_) => DatabaseService(uid: user.uid).userDataDoc,
+        child: Home(),
+      );
     }
   }
 }

@@ -18,7 +18,13 @@ class DatabaseService {
       'latitude': latitude,
       'longitude': longitude,
       'closeFriends': closeFriends
-    });
+    }, merge: true);
+  }
+
+  Future updateName (String firstName) async {
+    return await userCollection.document(uid).setData({
+      'firstName': firstName
+    }, merge: true);
   }
 
   // brew list from snapshot
@@ -53,6 +59,10 @@ class DatabaseService {
   Stream<UserData> get userData {
     return userCollection.document(uid).snapshots()
         .map(_userDataFromSnapshot);
+  }
+
+  Stream<DocumentSnapshot> get userDataDoc {
+    return userCollection.document(uid).snapshots();
   }
 
 }

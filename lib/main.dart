@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mvp/screens/wrapper.dart';
 import 'package:mvp/services/auth.dart';
+import 'package:mvp/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:mvp/models/user.dart';
 
@@ -10,8 +11,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
+    return StreamProvider<User>(
+      create: (_) => AuthService().user,
       child: MaterialApp(
         home: Wrapper(),
       ),

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mvp/models/user.dart';
+import 'package:mvp/services/auth.dart';
+import 'package:mvp/services/database.dart';
+import 'package:mvp/shared/loading.dart';
+import 'package:provider/provider.dart';
 
 class FirstTimeSetup extends StatefulWidget {
   @override
@@ -9,20 +14,34 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final AuthService _authService = AuthService();
+
   //show the loading screen when true
   bool _loading = false;
 
   // form values
   String _currentFirstName;
-  String _error = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
+
+    final user = Provider.of<User>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Loci'),
         backgroundColor: Colors.blue,
         elevation: 0.0,
+        actions: <Widget>[
+          FlatButton.icon(
+              onPressed: () async {
+                await _authService.signOut();
+              },
+              icon: Icon(Icons.person),
+              label: Text('logout')
+          ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 50.0),
@@ -38,34 +57,39 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
               decoration: const InputDecoration(
                 hintText: "Enter your first name.",
               ),
-              validator: (val) =>
-                  val.isEmpty ? 'Please enter your first name' : null,
+              validator: (val) {
+                //@Todo: validate further, against injection, non-text etc
+                return val.isEmpty ? 'Please enter your first name' : null;
+              },
               onChanged: (val) => setState(() => _currentFirstName = val),
             ),
             SizedBox(height: 20.0),
             Align(
               alignment: Alignment.centerRight,
               child: RaisedButton(
-                  color:  Colors.blue,
+                  color: Colors.blue,
                   child: Text('Next'),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
-//                    setState(() => _loading = true);
-//                    dynamic result = await _authService.signInEmailPass(_email, _password);
-//                    if (result == null) {
-//                      setState(() {
-//                        error = 'Failed login. Incorrect credentials';
-//                        _loading = false;
-//                      });
-//                    }
+                      error = '';
+                      setState(() => _loading = true);
+                      dynamic result = await DatabaseService(uid: user.uid)
+                          .updateName(_currentFirstName);
+                      if (result != null) {
+                        setState(() {
+                          error = 'Failed login. Incorrect credentials';
+                          _loading = false;
+                        });
+                      }
+                      print(user.toString());
                       print("Hi $_currentFirstName!");
                     }
                   }),
             ),
-//            Text(
-//              _error,
-//              style: TextStyle(color:  Colors.red, fontSize: 12.0),
-//            ),
+            Text(
+              error,
+              style: TextStyle(color: Colors.red, fontSize: 12.0),
+            ),
           ]),
         ),
       ),
