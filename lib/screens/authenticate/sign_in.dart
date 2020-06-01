@@ -84,7 +84,7 @@ class _SignInState extends State<SignIn> {
                   if (_formKey.currentState.validate()) {
                     setState(() => _loading = true);
                     //@TODO: get rid of trailing spaces in the email and password + other common practices
-                    dynamic result = await _authService.signInEmailPass(_email, _password);
+                    dynamic result = await _authService.signInEmailPass(_email.trim(), _password.trim());
                     if (result == null) {
                       setState(() {
                         error = 'Failed login. Incorrect credentials';
