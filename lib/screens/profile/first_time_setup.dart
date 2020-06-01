@@ -58,7 +58,7 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
                 hintText: "Enter your first name.",
               ),
               validator: (val) {
-                //@Todo: validate further, against injection, non-text etc
+                //@Todo: validate further, against non-text, injection? etc
                 return val.isEmpty ? 'Please enter your first name' : null;
               },
               onChanged: (val) => setState(() => _currentFirstName = val),
