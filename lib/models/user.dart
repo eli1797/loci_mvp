@@ -9,10 +9,12 @@ class User {
 class UserData {
 
   final String uid;
-  final String name;
-  final String sugars;
-  final int strength;
+  final String firstName;
+  final double latitude;
+  final double longitude;
+  final List<User> closeFriends;
 
-  UserData({ this.uid, this.name, this.sugars, this.strength });
+  UserData({ this.uid, this.firstName, this.latitude, this.longitude, this.closeFriends });
 
 }
+

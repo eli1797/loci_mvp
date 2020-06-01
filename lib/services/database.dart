@@ -5,18 +5,19 @@ import 'package:mvp/models/user.dart';
 class DatabaseService {
 
   // collection reference
-  final CollectionReference brewCollection = Firestore.instance.collection('brews');
+  final CollectionReference userCollection = Firestore.instance.collection('users');
 
   final String uid;
 
   // constructor
   DatabaseService({ this.uid });
 
-  Future updateUserData (String sugars, String name, int strength) async {
-    return await brewCollection.document(uid).setData({
-      'sugars': sugars,
-      'name': name,
-      'strength': strength,
+  Future updateUserData (String firstName, double latitude, double longitude, List<User> closeFriends) async {
+    return await userCollection.document(uid).setData({
+      'firstName': firstName,
+      'latitude': latitude,
+      'longitude': longitude,
+      'closeFriends': closeFriends
     });
   }
 
@@ -31,25 +32,26 @@ class DatabaseService {
     }).toList();
   }
 
-  // get brews stream
-  Stream<List<Brew>> get brews {
-    return brewCollection.snapshots()
-    .map(_brewListFromSnapshot);
-  }
+//  // get brews stream
+//  Stream<List<Brew>> get brews {
+//    return brewCollection.snapshots()
+//    .map(_brewListFromSnapshot);
+//  }
 
   // userData object from DocumentSnapshot
   UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
     return UserData(
       uid: uid,
-      name: documentSnapshot['name'],
-      sugars: documentSnapshot['sugars'],
-      strength: documentSnapshot['strength']
+      firstName: documentSnapshot['firstName'],
+      latitude: documentSnapshot['latitude'],
+      longitude: documentSnapshot['longitude'],
+      closeFriends: documentSnapshot['closeFriends']
     );
   }
 
   // get user info (doc) stream
   Stream<UserData> get userData {
-    return brewCollection.document(uid).snapshots()
+    return userCollection.document(uid).snapshots()
         .map(_userDataFromSnapshot);
   }
 

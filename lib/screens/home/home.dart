@@ -11,21 +11,20 @@ import 'package:provider/provider.dart';
 class Home extends StatelessWidget {
 
   final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
 
-    void _showSettingsPanel() {
-      showModalBottomSheet(context: context, builder: (context) {
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-          child: SettingsForm()
-        );
-      });
-    }
+//    void _showSettingsPanel() {
+//      showModalBottomSheet(context: context, builder: (context) {
+//        return Container(
+//          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+//          child: SettingsForm()
+//        );
+//      });
+//    }
 
-    return StreamProvider<List<Brew>>.value(
-      value: DatabaseService().brews,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Loci'),
@@ -38,14 +37,13 @@ class Home extends StatelessWidget {
                 },
                 icon: Icon(Icons.person),
                 label: Text('logout')),
-            FlatButton.icon(
-                onPressed: () => _showSettingsPanel(),
-                icon: Icon(Icons.settings),
-                label: Text('settings'))
+//            FlatButton.icon(
+//                onPressed: () => _showSettingsPanel(),
+//                icon: Icon(Icons.settings),
+//                label: Text('settings'))
           ],
         ),
-        body: Brew_List(),
-      ),
+        body: Text('Hello world'),
     );
   }
 }
