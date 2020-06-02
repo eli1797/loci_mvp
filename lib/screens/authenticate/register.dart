@@ -40,6 +40,7 @@ class _RegisterState extends State<Register> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                //@TODO: how change I change the keyboard to know I'm typing an email address in this form and give me a shortcut to @
                   decoration: const InputDecoration(
                     hintText: "Email",
 //                    enabledBorder: OutlineInputBorder(

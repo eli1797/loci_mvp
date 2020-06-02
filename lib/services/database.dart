@@ -44,16 +44,42 @@ class DatabaseService {
     }, merge: true);
   }
 
+  // create a geo fire point (lat, long) from a geolocator position
   GeoFirePoint createGeoFirePointFromPosition (Position position) {
     return geo.point(latitude: position.latitude, longitude: position.longitude);
   }
 
+  // update the users position (geohash and geopoint (lat, long)) and altitude
   Future updateLocationWithGeo (Position position) async {
     GeoFirePoint gfp = createGeoFirePointFromPosition(position);
     return await userCollection.document(uid).setData({
       'position': gfp.data,
       'altitude': position.altitude
     }, merge: true);
+  }
+
+  // try to query within range
+  Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
+    try {
+      GeoFirePoint gfpQueryPoint = createGeoFirePointFromPosition(position);
+      var geoRef = geo.collection(collectionRef: userCollection);
+      Stream<List<DocumentSnapshot>> result = geoRef.within(center: gfpQueryPoint,
+          radius: rangeInKM,
+          field: 'position',
+          strictMode: true);
+      result.listen((List<DocumentSnapshot> documentList) {
+        documentList.forEach((DocumentSnapshot document) {
+          String name = document.data['firstName'];
+          print(name);
+          GeoPoint point = document.data['position']['geopoint'];
+          print(point);
+        });
+      });
+      return result;
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
   }
 
   // userData object from DocumentSnapshot
@@ -74,8 +100,7 @@ class DatabaseService {
         .map(_userDataFromSnapshot);
   }
 
-  // using this one currently because the conversation to UserData using map
-  // seems to be producing null
+  // Stream Document Snapshots of UserData
   Stream<DocumentSnapshot> get userDataDoc {
     return userCollection.document(uid).snapshots();
   }
