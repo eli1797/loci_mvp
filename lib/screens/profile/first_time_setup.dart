@@ -54,8 +54,9 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
             ),
             SizedBox(height: 20.0),
             TextFormField(
+              textAlign: TextAlign.center,
               decoration: const InputDecoration(
-                hintText: "Enter your first name.",
+                hintText: "What do you go by?",
               ),
               validator: (val) {
                 //@Todo: validate further, against non-text, injection? etc
@@ -68,7 +69,7 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
               alignment: Alignment.centerRight,
               child: RaisedButton(
                   color: Colors.blue,
-                  child: Text('Next'),
+                  child: Text('Say Hi'),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
                       error = '';
