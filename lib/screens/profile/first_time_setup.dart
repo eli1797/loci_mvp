@@ -81,9 +81,10 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
                           error = 'Failed login. Incorrect credentials';
                           _loading = false;
                         });
+                      } else {
+                        print(user.toString());
+                        print("Hi $_currentFirstName!");
                       }
-                      print(user.toString());
-                      print("Hi $_currentFirstName!");
                     }
                   }),
             ),

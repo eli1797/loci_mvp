@@ -16,8 +16,11 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    //provider of the user model
     final user = Provider.of<User>(context);
     print(user);
+
+    final DatabaseService _databaseService = DatabaseService(uid: user.uid);
 
     _locationService.checkPermission();
 
@@ -49,9 +52,9 @@ class Home extends StatelessWidget {
               onPressed: () async {
                 Position pos =  await _locationService.getPosition();
                 print(pos);
-                await DatabaseService(uid: user.uid).updateLocationFromPosition(pos);
-                await DatabaseService(uid: user.uid).updateLocationWithGeo(pos);
-                DatabaseService(uid: user.uid).queryWithinRange(pos, 50);
+                await _databaseService.updateLocationFromPosition(pos);
+                await _databaseService.updateLocationWithGeo(pos);
+                _databaseService.queryWithinRange(pos, 50);
               },
             )
           ],
