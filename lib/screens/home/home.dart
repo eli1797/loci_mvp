@@ -49,7 +49,7 @@ class Home extends StatelessWidget {
               onPressed: () async {
                 Position pos =  await _locationService.getPosition();
                 print(pos);
-                await DatabaseService(uid: user.uid).updateLocation(pos);
+                await DatabaseService(uid: user.uid).updateLocationFromPosition(pos);
               },
             )
           ],

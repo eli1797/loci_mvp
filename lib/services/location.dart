@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 
 class LocationService {
 
+  // GeoLocator
   final Geolocator _geolocator = Geolocator();
   Position _currentPosition;
 
