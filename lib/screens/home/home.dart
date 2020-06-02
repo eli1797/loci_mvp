@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
+import 'package:mvp/screens/profile/profile.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
 import 'package:mvp/services/location.dart';
 import 'package:provider/provider.dart';
 
+//@Todo: might need to make Home stateful for updating -> unless it contains other widgts how are stateful??
 class Home extends StatelessWidget {
 
   final AuthService _authService = AuthService();
@@ -26,16 +28,14 @@ class Home extends StatelessWidget {
         backgroundColor: Colors.blue,
         elevation: 0.0,
         actions: <Widget>[
-          FlatButton.icon(
-              onPressed: () async {
-                await _authService.signOut();
-              },
-              icon: Icon(Icons.person),
-              label: Text('logout')),
-//            FlatButton.icon(
-//                onPressed: () => _showSettingsPanel(),
-//                icon: Icon(Icons.settings),
-//                label: Text('settings'))
+          IconButton(
+            icon: Icon(Icons.account_circle, color: Colors.black,),
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile())
+              );
+            })
         ],
       ),
       body: Container(
