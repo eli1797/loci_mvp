@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>(
       create: (_) => AuthService().user,
       child: MaterialApp(
-        home: Wrapper(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => Wrapper(),
+        },
       ),
     );
   }
