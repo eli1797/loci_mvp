@@ -69,6 +69,7 @@ class DatabaseService {
           strictMode: true);
       result.listen((List<DocumentSnapshot> documentList) {
         documentList.forEach((DocumentSnapshot document) {
+          print(document.documentID);
           String name = document.data['firstName'];
           print(name);
           GeoPoint point = document.data['position']['geopoint'];
