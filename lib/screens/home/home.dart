@@ -47,8 +47,8 @@ class Home extends StatelessWidget {
               color:  Colors.blue,
               child: Text('Get Location'),
               onPressed: () async {
-                print("pressed");
                 Position pos =  await _locationService.getPosition();
+                print(pos);
                 await DatabaseService(uid: user.uid).updateLocation(pos);
               },
             )

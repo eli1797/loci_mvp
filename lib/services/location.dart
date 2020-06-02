@@ -5,20 +5,22 @@ class LocationService {
   final Geolocator _geolocator = Geolocator();
   Position _currentPosition;
 
-  void checkPermission() {
-    _geolocator.checkGeolocationPermissionStatus().then((status) {
+  void checkPermission() async {
+    await _geolocator.checkGeolocationPermissionStatus().then((status) {
       print('status: $status');
     });
-    _geolocator.checkGeolocationPermissionStatus(
-        locationPermission: GeolocationPermission.locationAlways).then((
-        status) {
+    await _geolocator
+        .checkGeolocationPermissionStatus(
+            locationPermission: GeolocationPermission.locationAlways)
+        .then((status) {
       print('always status: $status');
     });
-    _geolocator.checkGeolocationPermissionStatus(
-        locationPermission: GeolocationPermission.locationWhenInUse)
-      ..then((status) {
-        print('whenInUse status: $status');
-      });
+    await _geolocator
+        .checkGeolocationPermissionStatus(
+            locationPermission: GeolocationPermission.locationWhenInUse)
+        .then((status) {
+      print('whenInUse status: $status');
+    });
   }
 
   Future<Position> getPosition() async {
