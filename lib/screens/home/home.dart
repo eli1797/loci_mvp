@@ -50,6 +50,7 @@ class Home extends StatelessWidget {
                 Position pos =  await _locationService.getPosition();
                 print(pos);
                 await DatabaseService(uid: user.uid).updateLocationFromPosition(pos);
+                await DatabaseService(uid: user.uid).updateLocationWithGeo(pos);
               },
             )
           ],

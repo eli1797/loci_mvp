@@ -44,17 +44,17 @@ class DatabaseService {
     }, merge: true);
   }
 
-//  // brew list from snapshot
-////  List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
-////    return snapshot.documents.map((doc) {
-////      return Brew(
-////        name: doc.data['name'] ?? '',
-////        strength: doc.data['strength'] ?? 0,
-////        sugars: doc.data['sugars'] ?? '0',
-////      );
-////    }).toList();
-////  }
+  GeoFirePoint createGeoFirePointFromPosition (Position position) {
+    return geo.point(latitude: position.latitude, longitude: position.longitude);
+  }
 
+  Future updateLocationWithGeo (Position position) async {
+    GeoFirePoint gfp = createGeoFirePointFromPosition(position);
+    return await userCollection.document(uid).setData({
+      'position': gfp.data,
+      'altitude': position.altitude
+    }, merge: true);
+  }
 
   // userData object from DocumentSnapshot
   UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
@@ -69,6 +69,7 @@ class DatabaseService {
 
   // get user info (doc) stream
   Stream<UserData> get userData {
+    // seems to be producing null (maybe mapping incorrectly?)
     return userCollection.document(uid).snapshots()
         .map(_userDataFromSnapshot);
   }
