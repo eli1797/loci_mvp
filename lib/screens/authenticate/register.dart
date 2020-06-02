@@ -40,63 +40,63 @@ class _RegisterState extends State<Register> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
-                //@TODO: how change I change the keyboard to know I'm typing an email address in this form and give me a shortcut to @
-                  decoration: const InputDecoration(
-                    hintText: "Email",
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: "Email",
 //                    enabledBorder: OutlineInputBorder(
 //                      borderSide: BorderSide(color: Colors.blue, width: 2.0)
 //                    ),
-                  ),
-                  validator: (val) {
-                    if (val.isEmpty) {
-                      return 'Enter a email';
-                    } else {
-                      return null;
-                    }
-                  },
-                  onChanged: (val) {
-                    setState(() {
-                      _email = val;
-                    });
+                ),
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return 'Enter a email';
+                  } else {
+                    return null;
                   }
+                },
+                onChanged: (val) {
+                  setState(() {
+                    _email = val;
+                  });
+                }
               ),
               SizedBox(height: 20.0),
               TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: "Password",
-                  ),
-                  validator: (val) {
-                    if (val.isEmpty) {
-                      return 'Enter a password';
-                    } else if (val.length < 6) {
-                      return 'Enter an password longer than 6 characters';
-                    } else {
-                      return null;
-                    }
-                  },
-                  obscureText: true,
-                  onChanged: (val) {
-                    setState(() {
-                      _password = val;
-                    });
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return 'Enter a password';
+                  } else if (val.length < 6) {
+                    return 'Enter an password longer than 6 characters';
+                  } else {
+                    return null;
                   }
+                },
+                obscureText: true,
+                onChanged: (val) {
+                  setState(() {
+                    _password = val;
+                  });
+                }
               ),
               SizedBox(height: 20.0),
               RaisedButton(
-                  color:  Colors.blue,
-                  child: Text('Register'),
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      setState(() => _loading = true);
-                      dynamic result = await _authService.registerEmailPass(_email.trim(), _password.trim());
-                      if (result == null) {
-                        setState(() {
-                          error = 'Please supply a valid email';
-                          _loading = false;
-                        });
-                      }
+                color:  Colors.blue,
+                child: Text('Register'),
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    setState(() => _loading = true);
+                    dynamic result = await _authService.registerEmailPass(_email.trim(), _password.trim());
+                    if (result == null) {
+                      setState(() {
+                        error = 'Please supply a valid email';
+                        _loading = false;
+                      });
                     }
-                  }),
+                  }
+                }),
               Text(
                 error,
                 style: TextStyle(color:  Colors.red, fontSize: 12.0),

@@ -41,6 +41,7 @@ class _SignInState extends State<SignIn> {
             children: <Widget>[
               SizedBox(height: 20.0),
               TextFormField(
+                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   hintText: "Email",
                 ),
