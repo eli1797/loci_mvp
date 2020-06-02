@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 
 class DatabaseService {
@@ -23,6 +24,14 @@ class DatabaseService {
   Future updateName (String firstName) async {
     return await userCollection.document(uid).setData({
       'firstName': firstName
+    }, merge: true);
+  }
+
+  Future updateLocation (Position position) async {
+    return await userCollection.document(uid).setData({
+      'latitude': position.latitude ?? 0.0,
+      'longitude': position.longitude ?? 0.0,
+      'altitude': position.altitude ?? 0.0,
     }, merge: true);
   }
 

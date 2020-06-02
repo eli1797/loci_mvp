@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mvp/models/user.dart';
 import 'package:mvp/services/auth.dart';
+import 'package:mvp/services/database.dart';
+import 'package:mvp/services/location.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
 
   final AuthService _authService = AuthService();
+  final LocationService _locationService = LocationService();
 
   @override
   Widget build(BuildContext context) {
+
+    final user = Provider.of<User>(context);
+    print(user);
+
+    _locationService.checkPermission();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -26,7 +38,24 @@ class Home extends StatelessWidget {
 //                label: Text('settings'))
         ],
       ),
-      body: Text('Hello world'),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 20.0),
+            RaisedButton(
+              color:  Colors.blue,
+              child: Text('Get Location'),
+              onPressed: () async {
+                print("pressed");
+                Position pos =  await _locationService.getPosition();
+                await DatabaseService(uid: user.uid).updateLocation(pos);
+              },
+            )
+          ],
+        ),
+      )
+
     );
   }
 }
