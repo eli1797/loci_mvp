@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
+import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/profile/profile.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
@@ -18,7 +19,9 @@ class Home extends StatelessWidget {
 
     //provider of the user model
     final user = Provider.of<User>(context);
-    print(user);
+    if (user == null) {
+      return Authenticate();
+    }
 
     final DatabaseService _databaseService = DatabaseService(uid: user.uid);
 

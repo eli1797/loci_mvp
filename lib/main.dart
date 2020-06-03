@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
 //          '/': (context) => Wrapper(),
 //          '/homeWrapper': (context) => HomeWrapper(),
 //        },
-      home: Wrapper(),
+        home: Wrapper(),
       ),
     );
   }
