@@ -54,10 +54,7 @@ class Home extends StatelessWidget {
               child: Text('Get Location'),
               onPressed: () async {
                 Position pos =  await _locationService.getPosition();
-                print(pos);
-                await _databaseService.updateLocationFromPosition(pos);
                 await _databaseService.updateLocationWithGeo(pos);
-                _databaseService.queryWithinRange(pos, 50);
               },
             ),
           ],

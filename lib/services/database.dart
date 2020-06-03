@@ -19,28 +19,20 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   //update all user data
-  Future updateUserData (String firstName, double latitude, double longitude, List<User> closeFriends) async {
+  Future updateUserData (String firstName, Position position, List<User> closeFriends) async {
+    GeoFirePoint gfp = createGeoFirePointFromPosition(position);
     return await userCollection.document(uid).setData({
       'firstName': firstName,
-      'latitude': latitude,
-      'longitude': longitude,
+      'position': gfp.data,
       'closeFriends': closeFriends
     }, merge: true);
   }
 
   //update a user's firstName
   Future updateName (String firstName) async {
+    //@Todo: validation here?
     return await userCollection.document(uid).setData({
       'firstName': firstName
-    }, merge: true);
-  }
-
-  //update a user's location from Position
-  Future updateLocationFromPosition (Position position) async {
-    return await userCollection.document(uid).setData({
-      'latitude': position.latitude ?? 0.0,
-      'longitude': position.longitude ?? 0.0,
-      'altitude': position.altitude ?? 0.0,
     }, merge: true);
   }
 
@@ -54,15 +46,20 @@ class DatabaseService {
     GeoFirePoint gfp = createGeoFirePointFromPosition(position);
     return await userCollection.document(uid).setData({
       'position': gfp.data,
-      'altitude': position.altitude
+//      'altitude': position.altitude
     }, merge: true);
   }
 
-  // try to query within range
+  // Query all users within range
   Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
+    return queryCollectionWithinRange(userCollection, position, rangeInKM);
+  }
+
+  // Query a collection for Document Snapshots within range of a position
+  Stream<List<DocumentSnapshot>> queryCollectionWithinRange(CollectionReference collectionReference, Position position, double rangeInKM) {
     try {
       GeoFirePoint gfpQueryPoint = createGeoFirePointFromPosition(position);
-      var geoRef = geo.collection(collectionRef: userCollection);
+      var geoRef = geo.collection(collectionRef: collectionReference);
       Stream<List<DocumentSnapshot>> result = geoRef.within(center: gfpQueryPoint,
           radius: rangeInKM,
           field: 'position',
@@ -83,6 +80,15 @@ class DatabaseService {
     }
   }
 
+
+
+
+  // Stream UserData
+  Stream<UserData> get userData {
+    return userCollection.document(uid).snapshots()
+        .map(_userDataFromSnapshot);
+  }
+
   // userData object from DocumentSnapshot
   UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
     return UserData(
@@ -90,15 +96,7 @@ class DatabaseService {
       firstName: documentSnapshot['firstName'],
       latitude: documentSnapshot['latitude'],
       longitude: documentSnapshot['longitude'],
-//      closeFriends: documentSnapshot['closeFriends']
     );
-  }
-
-  // get user info (doc) stream
-  Stream<UserData> get userData {
-    // seems to be producing null (maybe mapping incorrectly?)
-    return userCollection.document(uid).snapshots()
-        .map(_userDataFromSnapshot);
   }
 
   // Stream Document Snapshots of UserData
