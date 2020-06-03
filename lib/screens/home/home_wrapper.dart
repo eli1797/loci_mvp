@@ -34,14 +34,15 @@ class _HomeWrapperState extends State<HomeWrapper> {
   @override
   Widget build(BuildContext context) {
 
-    _loadOnBoarded();
-
-    print("home onboarded: " + _hasOnboarded.toString());
-
-    if (_hasOnboarded != null && _hasOnboarded) {
-      return Home();
-    } else {
-      return FirstTimeSetup();
-    }
+//    _loadOnBoarded();
+//
+//    print("home onboarded: " + _hasOnboarded.toString());
+//
+//    if (_hasOnboarded != null && _hasOnboarded) {
+//      return Home();
+//    } else {
+//      return FirstTimeSetup();
+//    }
+    return Home();
   }
 }
