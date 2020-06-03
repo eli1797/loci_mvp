@@ -20,8 +20,7 @@ class Settings extends StatelessWidget {
             child: Text('Log out'),
             onPressed: () async {
               Future result = await _authService.signOut();
-              Navigator.pop(context);
-//              Navigator.pushNamed(context, '/');
+              Navigator.pushNamed(context, '/');
             }),
           ],
         ),
