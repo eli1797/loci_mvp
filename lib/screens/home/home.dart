@@ -59,7 +59,7 @@ class Home extends StatelessWidget {
                 await _databaseService.updateLocationWithGeo(pos);
                 _databaseService.queryWithinRange(pos, 50);
               },
-            )
+            ),
           ],
         ),
       )

@@ -13,9 +13,11 @@ class UserData {
   final String firstName;
   final double latitude;
   final double longitude;
-  final List<User> closeFriends;
+//  final List<User> closeFriends;
 
-  UserData({ this.uid, this.firstName, this.latitude, this.longitude, this.closeFriends });
+//  UserData({ this.uid, this.firstName, this.latitude, this.longitude, this.closeFriends });
+  UserData({ this.uid, this.firstName, this.latitude, this.longitude });
+
 
 }
 

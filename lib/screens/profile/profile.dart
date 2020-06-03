@@ -28,11 +28,11 @@ class _ProfileState extends State<Profile> {
       return Authenticate();
     }
 
-    return StreamBuilder<DocumentSnapshot>(
-        stream: DatabaseService(uid: user.uid).userDataDoc,
+    return StreamBuilder<UserData>(
+        stream: DatabaseService(uid: user.uid).userData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-//            UserData userData = UserData(snapshot.data);
+            UserData userData = snapshot.data;
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Profile"),
@@ -65,7 +65,16 @@ class _ProfileState extends State<Profile> {
                               await DatabaseService(uid: user.uid).updateName(val);
                             },
                           ),
-
+                          SizedBox(height: 20.0),
+                          RaisedButton(
+                            color:  Colors.blue,
+                            child: Text('Get UserData'),
+                            onPressed: () async {
+                              print("User Data");
+                              print(userData.uid);
+                              print(userData.firstName);
+                            },
+                          )
                         ],
                       ),
                     )

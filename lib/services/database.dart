@@ -90,7 +90,7 @@ class DatabaseService {
       firstName: documentSnapshot['firstName'],
       latitude: documentSnapshot['latitude'],
       longitude: documentSnapshot['longitude'],
-      closeFriends: documentSnapshot['closeFriends']
+//      closeFriends: documentSnapshot['closeFriends']
     );
   }
 
