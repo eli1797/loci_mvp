@@ -5,6 +5,7 @@ import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home_wrapper.dart';
 import 'package:mvp/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 Wrapper listens for auth changes and chooses what to show accordingly
@@ -15,9 +16,6 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final user = Provider.of<User>(context);
-    print(user);
-
-    //@Todo: show the home or the firstTimeSetup screen based on if the user has set a firstName
 
     if (user == null) {
       return Authenticate();

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mvp/models/user.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/shared/loading.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
 
@@ -24,6 +27,10 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+
+    final user = Provider.of<User>(context);
+    print(user);
+
     return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,

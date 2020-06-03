@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
+
 class User {
 
   final String uid;
 
   User({ this.uid });
-
 }
 
 class UserData {

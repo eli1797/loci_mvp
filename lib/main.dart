@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvp/screens/home/home_wrapper.dart';
 import 'package:mvp/screens/wrapper.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
 //        initialRoute: '/',
 //        routes: {
 //          '/': (context) => Wrapper(),
+//          '/homeWrapper': (context) => HomeWrapper(),
 //        },
       home: Wrapper(),
       ),

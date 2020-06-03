@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
+import 'package:mvp/services/local_persistence.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirstTimeSetup extends StatefulWidget {
   @override
@@ -13,8 +15,8 @@ class FirstTimeSetup extends StatefulWidget {
 class _FirstTimeSetupState extends State<FirstTimeSetup> {
 
   final _formKey = GlobalKey<FormState>();
-
   final AuthService _authService = AuthService();
+  final LocalPersistence _localPersistence = LocalPersistence();
 
   //show the loading screen when true
   bool _loading = false;
@@ -82,6 +84,7 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
                           _loading = false;
                         });
                       } else {
+                        _localPersistence.setDeviceOnBoarded(true);
                         print(user.toString());
                         print("Hi $_currentFirstName!");
                       }

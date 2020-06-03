@@ -36,8 +36,14 @@ dependencies:
 
   flutter_spinkit: "^4.1.2"
 
+  # allows for local key-value store persistence
+  # using it to know if the user has onboarded or not
+  shared_preferences: '>=0.5.7+3 <2.0.0'
+
   geoflutterfire:
     git: git://github.com/DarshanGowda0/GeoFlutterFire.git
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
