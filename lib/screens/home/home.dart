@@ -9,10 +9,27 @@ import 'package:mvp/services/location.dart';
 import 'package:provider/provider.dart';
 
 //@Todo: might need to make Home stateful for updating -> unless it contains other widgts how are stateful??
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
 
   final AuthService _authService = AuthService();
   final LocationService _locationService = LocationService();
+
+  // first name entry
+  final _formKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
+
+
+  @override
+  void dispose(){
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +45,7 @@ class Home extends StatelessWidget {
     _locationService.checkPermission();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Loci'),
@@ -58,23 +76,43 @@ class Home extends StatelessWidget {
               },
             ),
             SizedBox(height: 20.0),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  labelText: 'Friend First Name',
+                ),
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return 'Enter a name';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 20.0),
             RaisedButton(
               color:  Colors.blue,
-              child: Text('Make random friend'),
+              child: Text('Add friend by FirstName'),
               onPressed: () async {
-                print("Random friend!");
-                var result = await _databaseService.queryOnFirstName("Bob");
-                print(result.uid);
-                await _databaseService.randomFriend();
+                print("_currentFriendName: " + _controller.text);
+                await _databaseService.addFriendByFirstName(_controller.text);
+                _controller.clear();
               },
             ),
             SizedBox(height: 20.0),
             RaisedButton(
               color:  Colors.blue,
-              child: Text('Query'),
+              child: Text('Query My Friends'),
               onPressed: () async {
-                Position pos =  await _locationService.getPosition();
-                print("Querying from $pos");
+//                Position pos =  await _locationService.getPosition();
+//                print("Querying from $pos");
+                print("Friends");
+                // Note all this contains is a uid, its not actually a user data
+                List<UserData> friends = await _databaseService.queryFriends();
+                friends.forEach((element) => print(element.uid));
               },
             )
           ],

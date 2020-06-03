@@ -55,35 +55,77 @@ class DatabaseService {
   }
 
   //update add a random friend
-  Future randomFriend () async {
+  Future addFriendByFirstName (String firstName) async {
     // need to get a random uid from the server
-    UserData userData = await queryOnFirstName("Bob");
-    // add that uid to my close friends subcollection
-    return await _userCollection.document(uid).collection('closeFriends').document(userData.uid).setData({
-      'friend': userData.uid
-    });
+    try {
+      UserData nameUserData = await queryOnFirstName(firstName);
+      print(nameUserData.firstName);
+      print(nameUserData);
+      // add that uid to my close friends subcollection
+      return await _userCollection.document(uid)
+          .collection('closeFriends')
+          .document(nameUserData.uid)
+          .setData({
+        'friend': nameUserData.uid
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
   }
 
   //   QUERIES   //
 
   // get UserData from first name
   Future<UserData> queryOnFirstName(String firstName) async {
-    QuerySnapshot qSnap = await _userCollection.where("firstName", isEqualTo: firstName).limit(1)
-        .getDocuments();
+    try {
+      QuerySnapshot qSnap = await _userCollection.where(
+          "firstName", isEqualTo: firstName).limit(1)
+          .getDocuments();
 
-    return qSnap.documents.map(_userDataFromSnapshot).toList().first;
+      print(qSnap.documents[0].data);
+
+      return qSnap.documents
+          .map(_userDataFromSnapshot)
+          .toList()
+          .first;
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
   }
 
-  // Query all users within range
-  Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
-    return queryCollectionWithinRange(_userCollection, position, rangeInKM);
+  // userData object from DocumentSnapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
+    return UserData(
+      uid: documentSnapshot.documentID,
+      firstName: documentSnapshot['firstName'],
+      latitude: documentSnapshot['latitude'],
+      longitude: documentSnapshot['longitude'],
+    );
   }
+
+//  // Query all users within range
+//  Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
+//    return queryCollectionWithinRange(_userCollection, position, rangeInKM);
+//  }
+
+  //this only returns friends uid, not an actual reference to their UserData
+  Future<List<UserData>> queryFriends() async {
+    CollectionReference collecRef = _userCollection.document(uid).collection(
+        "closeFriends");
+    QuerySnapshot qSnap = await collecRef.getDocuments();
+    return qSnap.documents
+        .map(_userDataFromSnapshot)
+        .toList();
+  }
+
 
   // Query a collection for Document Snapshots within range of a position
-  Stream<List<DocumentSnapshot>> queryCollectionWithinRange(CollectionReference collectionReference, Position position, double rangeInKM) {
+  Stream<List<DocumentSnapshot>> queryFriendsWithinRange(Position position, double rangeInKM) {
     try {
       GeoFirePoint gfpQueryPoint = createGeoFirePointFromPosition(position);
-      var geoRef = geo.collection(collectionRef: collectionReference);
+      var geoRef = geo.collection(collectionRef: _userCollection.document(uid).collection("closeFriends"));
       Stream<List<DocumentSnapshot>> result = geoRef.within(center: gfpQueryPoint,
           radius: rangeInKM,
           field: 'position',
@@ -109,11 +151,11 @@ class DatabaseService {
   // Stream UserData
   Stream<UserData> get userData {
     return _userCollection.document(uid).snapshots()
-        .map(_userDataFromSnapshot);
+        .map(_thisUserDataFromSnapshot);
   }
 
   // userData object from DocumentSnapshot
-  UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
+  UserData _thisUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
     return UserData(
       uid: uid,
       firstName: documentSnapshot['firstName'],
