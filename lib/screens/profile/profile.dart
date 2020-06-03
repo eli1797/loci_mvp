@@ -57,6 +57,12 @@ class _ProfileState extends State<Profile> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(height: 20.0),
+                          CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            radius: 50.0,
+                            child: Text('You'),
+                          ),
+                          SizedBox(height: 20.0),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'First name',
