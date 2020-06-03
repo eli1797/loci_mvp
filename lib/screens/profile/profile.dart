@@ -57,24 +57,15 @@ class _ProfileState extends State<Profile> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(height: 20.0),
-                          TextField(
+                          TextFormField(
                             decoration: InputDecoration(
                               labelText: 'First name',
                             ),
-                            onSubmitted: (val) async {
+                            initialValue: userData.firstName,
+                            onFieldSubmitted: (val) async {
                               await DatabaseService(uid: user.uid).updateName(val);
                             },
                           ),
-                          SizedBox(height: 20.0),
-                          RaisedButton(
-                            color:  Colors.blue,
-                            child: Text('Get UserData'),
-                            onPressed: () async {
-                              print("User Data");
-                              print(userData.uid);
-                              print(userData.firstName);
-                            },
-                          )
                         ],
                       ),
                     )
