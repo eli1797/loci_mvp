@@ -26,61 +26,67 @@ class _ProfileState extends State<Profile> {
 
     if (user == null) {
       return Authenticate();
-    }
+    } else {
 
-    return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            UserData userData = snapshot.data;
-            return Scaffold(
-                appBar: AppBar(
-                  title: Text("Profile"),
-                  actions: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Settings())
-                          );
-                        })
-                  ],
-                ),
-                body: Container(
-                    padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 20.0),
-                          CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            radius: 50.0,
-                            child: Text('You'),
+      print(user);
+
+      return StreamBuilder<UserData>(
+          stream: DatabaseService(uid: user.uid).userData,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              UserData userData = snapshot.data;
+              return Scaffold(
+                  appBar: AppBar(
+                    title: Text("Profile"),
+                    actions: <Widget>[
+                      IconButton(
+                          icon: Icon(
+                            Icons.settings,
+                            color: Colors.black,
                           ),
-                          SizedBox(height: 20.0),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'First name',
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Settings())
+                            );
+                          })
+                    ],
+                  ),
+                  body: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 50.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 20.0),
+                            CircleAvatar(
+                              backgroundColor: Colors.blue,
+                              radius: 50.0,
+                              child: Text('You'),
                             ),
-                            initialValue: userData.firstName,
-                            onFieldSubmitted: (val) async {
-                              await DatabaseService(uid: user.uid).updateName(val);
-                            },
-                          ),
-                        ],
-                      ),
-                    )
-                )
-            );
-          }
-          else {
-            return Loading();
-          }
-        });
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'First name',
+                              ),
+                              initialValue: userData.firstName,
+                              onFieldSubmitted: (val) async {
+                                await DatabaseService(uid: user.uid).updateName(
+                                    val);
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                  )
+              );
+            }
+            else {
+              return Loading();
+            }
+          });
+    }
   }
 }

@@ -51,12 +51,32 @@ class Home extends StatelessWidget {
             SizedBox(height: 20.0),
             RaisedButton(
               color:  Colors.blue,
-              child: Text('Get Location'),
+              child: Text('Update Location'),
               onPressed: () async {
                 Position pos =  await _locationService.getPosition();
                 await _databaseService.updateLocationWithGeo(pos);
               },
             ),
+            SizedBox(height: 20.0),
+            RaisedButton(
+              color:  Colors.blue,
+              child: Text('Make random friend'),
+              onPressed: () async {
+                print("Random friend!");
+                var result = await _databaseService.queryOnFirstName("Bob");
+                print(result.uid);
+                await _databaseService.randomFriend();
+              },
+            ),
+            SizedBox(height: 20.0),
+            RaisedButton(
+              color:  Colors.blue,
+              child: Text('Query'),
+              onPressed: () async {
+                Position pos =  await _locationService.getPosition();
+                print("Querying from $pos");
+              },
+            )
           ],
         ),
       )

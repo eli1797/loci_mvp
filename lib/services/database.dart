@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -7,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DatabaseService {
 
   // collection reference
-  final CollectionReference userCollection = Firestore.instance.collection('users');
+  final CollectionReference _userCollection = Firestore.instance.collection('users');
 
   //GeoFlutterFire
   Geoflutterfire geo = Geoflutterfire();
@@ -18,10 +21,12 @@ class DatabaseService {
   // constructor
   DatabaseService({ this.uid });
 
+  //   Writes   //
+
   //update all user data
   Future updateUserData (String firstName, Position position, List<User> closeFriends) async {
     GeoFirePoint gfp = createGeoFirePointFromPosition(position);
-    return await userCollection.document(uid).setData({
+    return await _userCollection.document(uid).setData({
       'firstName': firstName,
       'position': gfp.data,
       'closeFriends': closeFriends
@@ -31,7 +36,7 @@ class DatabaseService {
   //update a user's firstName
   Future updateName (String firstName) async {
     //@Todo: validation here?
-    return await userCollection.document(uid).setData({
+    return await _userCollection.document(uid).setData({
       'firstName': firstName
     }, merge: true);
   }
@@ -44,15 +49,34 @@ class DatabaseService {
   // update the users position (geohash and geopoint (lat, long)) and altitude
   Future updateLocationWithGeo (Position position) async {
     GeoFirePoint gfp = createGeoFirePointFromPosition(position);
-    return await userCollection.document(uid).setData({
+    return await _userCollection.document(uid).setData({
       'position': gfp.data,
-//      'altitude': position.altitude
     }, merge: true);
+  }
+
+  //update add a random friend
+  Future randomFriend () async {
+    // need to get a random uid from the server
+    UserData userData = await queryOnFirstName("Bob");
+    // add that uid to my close friends subcollection
+    return await _userCollection.document(uid).collection('closeFriends').document(userData.uid).setData({
+      'friend': userData.uid
+    });
+  }
+
+  //   QUERIES   //
+
+  // get UserData from first name
+  Future<UserData> queryOnFirstName(String firstName) async {
+    QuerySnapshot qSnap = await _userCollection.where("firstName", isEqualTo: firstName).limit(1)
+        .getDocuments();
+
+    return qSnap.documents.map(_userDataFromSnapshot).toList().first;
   }
 
   // Query all users within range
   Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
-    return queryCollectionWithinRange(userCollection, position, rangeInKM);
+    return queryCollectionWithinRange(_userCollection, position, rangeInKM);
   }
 
   // Query a collection for Document Snapshots within range of a position
@@ -80,12 +104,11 @@ class DatabaseService {
     }
   }
 
-
-
+  //   STREAMS   //
 
   // Stream UserData
   Stream<UserData> get userData {
-    return userCollection.document(uid).snapshots()
+    return _userCollection.document(uid).snapshots()
         .map(_userDataFromSnapshot);
   }
 
@@ -101,7 +124,7 @@ class DatabaseService {
 
   // Stream Document Snapshots of UserData
   Stream<DocumentSnapshot> get userDataDoc {
-    return userCollection.document(uid).snapshots();
+    return _userCollection.document(uid).snapshots();
   }
 
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
+import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home.dart';
 import 'package:mvp/screens/profile/first_time_setup.dart';
 import 'package:mvp/services/local_persistence.dart';
@@ -43,6 +44,11 @@ class _HomeWrapperState extends State<HomeWrapper> {
 //    } else {
 //      return FirstTimeSetup();
 //    }
-    return Home();
+    final user = Provider.of<User>(context);
+    if (user == null) {
+      return Authenticate();
+    } else {
+      return Home();
+    }
   }
 }
