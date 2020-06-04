@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
               child: Text('Query My Friends'),
               onPressed: () async {
                 Position pos =  await _locationService.getPosition();
-//                print("Querying from $pos");
+                print("Querying from $pos");
 //                print("Friends");
                 // Note all this contains is a uid, its not actually a user data
                 List<UserData> friends = await _databaseService.queryFriends();
