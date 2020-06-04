@@ -72,6 +72,24 @@ class DatabaseService {
     }
   }
 
+  //update add a random friend
+  Future addFriendByFirstNameToList (String firstName) async {
+    // need to get a random uid from the server
+    try {
+      UserData nameUserData = await queryOnFirstName(firstName);
+      print(nameUserData.firstName);
+      print(nameUserData);
+      // add that uid to my close friends subcollection
+      return await _userCollection.document(uid)
+          .setData({
+        'closeFriendsUIdList': FieldValue.arrayUnion([nameUserData.uid])
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   //   QUERIES   //
 
   // get UserData from first name
@@ -93,6 +111,16 @@ class DatabaseService {
     }
   }
 
+  // get UserData from uid
+  Future<UserData> queryOnUId(String userUId) async {
+    try {
+     return await _userCollection.document(userUId).get().then((value) => _userDataFromSnapshot(value));
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   // userData object from DocumentSnapshot
   UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
 
@@ -101,24 +129,13 @@ class DatabaseService {
       uid: documentSnapshot.documentID,
       firstName: documentSnapshot['firstName'],
       gfp: documentSnapshot['position']['geopoint']
-//      latitude: documentSnapshot['latitude'],
-//      longitude: documentSnapshot['longitude'],
     );
   }
 
-//  // Query all users within range
-//  Stream<List<DocumentSnapshot>> queryWithinRange(Position position, double rangeInKM) {
-//    return queryCollectionWithinRange(_userCollection, position, rangeInKM);
-//  }
 
-  //this only returns friends uid, not an actual reference to their UserData
   Future<List<UserData>> queryFriends() async {
     CollectionReference collecRef = _userCollection.document(uid).collection(
         "closeFriends");
-//    QuerySnapshot qSnap = await collecRef.getDocuments();
-//    return qSnap.documents
-//        .map(_userDataFromSnapshot)
-//        .toList();
 
     List<String> friendUId = [];
 
@@ -146,13 +163,24 @@ class DatabaseService {
     }
   }
 
-  Future<UserData> getUserFromUId(String userId) async{
+  //this only returns friends uid, not an actual reference to their UserData
+  Future<List<UserData>> queryFriendsFromList() async {
 
-//     docRef =  _userCollection.where(FieldPath.documentId, )
+    List friendsUIds = [];
+    await _userCollection.document(uid).get().then((value) => friendsUIds = value.data['closeFriendsUIdList']);
 
-
+    List<UserData> toReturn = new List<UserData>();
+    if (friendsUIds.isNotEmpty) {
+      for (var i in friendsUIds) {
+        toReturn.add(await queryOnUId(i));
+      }
+      return toReturn;
+    } else {
+      return [];
+    }
 
   }
+
 
 
   // Doesn't work without replication
@@ -192,13 +220,19 @@ class DatabaseService {
 
   // userData object from DocumentSnapshot
   UserData _thisUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
-    return UserData(
-      uid: uid,
-      firstName: documentSnapshot['firstName'],
-      gfp: documentSnapshot['position']['geopoint']
-//      latitude: documentSnapshot['latitude'],
-//      longitude: documentSnapshot['longitude'],
-    );
+    try {
+      return UserData(
+        uid: uid,
+        firstName: documentSnapshot['firstName'] ?? "unnamed_member",
+        gfp: documentSnapshot['position']['geopoint'] ?? null
+       );
+    } catch(e) {
+      return UserData(
+        uid: uid,
+        firstName: documentSnapshot['firstName'] ?? "unnamed_member",
+        gfp: null
+      );
+    }
   }
 
   // Stream Document Snapshots of UserData

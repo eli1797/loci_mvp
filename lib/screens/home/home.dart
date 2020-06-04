@@ -99,6 +99,7 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 print("_currentFriendName: " + _controller.text);
                 await _databaseService.addFriendByFirstName(_controller.text);
+                await _databaseService.addFriendByFirstNameToList(_controller.text);
                 _controller.clear();
               },
             ),
@@ -107,25 +108,16 @@ class _HomeState extends State<Home> {
               color:  Colors.blue,
               child: Text('Query My Friends'),
               onPressed: () async {
-                Position pos =  await _locationService.getPosition();
-                print("Querying from $pos");
-//                print("Friends");
-                // Note all this contains is a uid, its not actually a user data
-                List<UserData> friends = await _databaseService.queryFriends();
+                List<UserData> friends = await _databaseService.queryFriendsFromList();
+
                 friends.forEach((element) async {
                   print(element.uid);
                   print(element.firstName);
                   print(element.gfp.longitude);
                   print(element.gfp.latitude);
                   print("");
-
-                  print(await _locationService.distanceFromMe(pos, element.gfp.latitude, element.gfp.longitude));
                 });
 
-//                await Future.wait(friends.map((e) async {
-//                    var result = await _locationService.distanceFromMe(pos, e.gfp.latitude, e.gfp.longitude);
-//                    print(result);
-//                }));
               },
             )
           ],
