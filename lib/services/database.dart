@@ -163,9 +163,8 @@ class DatabaseService {
     }
   }
 
-  //this only returns friends uid, not an actual reference to their UserData
+  // get a List of UserData, getting uids from the list in the users document
   Future<List<UserData>> queryFriendsFromList() async {
-
     List friendsUIds = [];
     await _userCollection.document(uid).get().then((value) => friendsUIds = value.data['closeFriendsUIdList']);
 
@@ -178,7 +177,6 @@ class DatabaseService {
     } else {
       return [];
     }
-
   }
 
 
@@ -220,17 +218,22 @@ class DatabaseService {
 
   // userData object from DocumentSnapshot
   UserData _thisUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
+
     try {
       return UserData(
         uid: uid,
         firstName: documentSnapshot['firstName'] ?? "unnamed_member",
-        gfp: documentSnapshot['position']['geopoint'] ?? null
+        gfp: documentSnapshot['position']['geopoint'] ?? null,
+        closeFriendsUIdList: documentSnapshot['closeFriendsUIdList']
+            .cast<String>() ?? []
        );
     } catch(e) {
       return UserData(
         uid: uid,
         firstName: documentSnapshot['firstName'] ?? "unnamed_member",
-        gfp: null
+        gfp: null,
+        closeFriendsUIdList: documentSnapshot['closeFriendsUIdList']
+            .cast<String>() ?? []
       );
     }
   }

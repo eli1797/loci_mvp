@@ -108,6 +108,7 @@ class _HomeState extends State<Home> {
               color:  Colors.blue,
               child: Text('Query My Friends'),
               onPressed: () async {
+
                 List<UserData> friends = await _databaseService.queryFriendsFromList();
 
                 friends.forEach((element) async {
