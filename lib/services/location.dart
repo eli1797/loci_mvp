@@ -4,7 +4,6 @@ class LocationService {
 
   // GeoLocator
   final Geolocator _geolocator = Geolocator();
-  Position _currentPosition;
 
   void checkPermission() async {
     await _geolocator.checkGeolocationPermissionStatus().then((status) {
@@ -27,5 +26,9 @@ class LocationService {
   Future<Position> getPosition() async {
     return await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
+  }
+
+  Future<double> distanceFromMe(Position myPos, double lat, double long) async {
+    return _geolocator.distanceBetween(myPos.latitude, myPos.longitude, lat, long);
   }
 }

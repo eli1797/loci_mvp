@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
 
@@ -97,11 +95,14 @@ class DatabaseService {
 
   // userData object from DocumentSnapshot
   UserData _userDataFromSnapshot(DocumentSnapshot documentSnapshot) {
+
+    print(documentSnapshot['position'].runtimeType);
     return UserData(
       uid: documentSnapshot.documentID,
       firstName: documentSnapshot['firstName'],
-      latitude: documentSnapshot['latitude'],
-      longitude: documentSnapshot['longitude'],
+      gfp: documentSnapshot['position']['geopoint']
+//      latitude: documentSnapshot['latitude'],
+//      longitude: documentSnapshot['longitude'],
     );
   }
 
@@ -114,17 +115,52 @@ class DatabaseService {
   Future<List<UserData>> queryFriends() async {
     CollectionReference collecRef = _userCollection.document(uid).collection(
         "closeFriends");
-    QuerySnapshot qSnap = await collecRef.getDocuments();
-    return qSnap.documents
-        .map(_userDataFromSnapshot)
-        .toList();
+//    QuerySnapshot qSnap = await collecRef.getDocuments();
+//    return qSnap.documents
+//        .map(_userDataFromSnapshot)
+//        .toList();
+
+    List<String> friendUId = [];
+
+    await collecRef.getDocuments().then((value){
+      value.documents.forEach((element) {
+        friendUId.add(element.data['friend']);
+      });
+    });
+
+//    QuerySnapshot qSnap = await _userCollection.where(FieldPath.documentId, isEqualTo: friendUId)
+//        .getDocuments();
+
+//    return qSnap.documents.map(_userDataFromSnapshot).toList();
+    List<UserData> toReturn = new List<UserData>();
+
+    if (friendUId.isNotEmpty) {
+      for (var i in friendUId) {
+        QuerySnapshot qSnap = await _userCollection.where(FieldPath.documentId, isEqualTo: i)
+            .getDocuments();
+        toReturn.add(qSnap.documents.map(_userDataFromSnapshot).toList()[0]);
+      }
+      return toReturn;
+    } else {
+      return [];
+    }
+  }
+
+  Future<UserData> getUserFromUId(String userId) async{
+
+//     docRef =  _userCollection.where(FieldPath.documentId, )
+
+
+
   }
 
 
+  // Doesn't work without replication
   // Query a collection for Document Snapshots within range of a position
   Stream<List<DocumentSnapshot>> queryFriendsWithinRange(Position position, double rangeInKM) {
     try {
       GeoFirePoint gfpQueryPoint = createGeoFirePointFromPosition(position);
+      //This doesn't work unless the closeFriends data are duplicated
       var geoRef = geo.collection(collectionRef: _userCollection.document(uid).collection("closeFriends"));
       Stream<List<DocumentSnapshot>> result = geoRef.within(center: gfpQueryPoint,
           radius: rangeInKM,
@@ -159,8 +195,9 @@ class DatabaseService {
     return UserData(
       uid: uid,
       firstName: documentSnapshot['firstName'],
-      latitude: documentSnapshot['latitude'],
-      longitude: documentSnapshot['longitude'],
+      gfp: documentSnapshot['position']['geopoint']
+//      latitude: documentSnapshot['latitude'],
+//      longitude: documentSnapshot['longitude'],
     );
   }
 
