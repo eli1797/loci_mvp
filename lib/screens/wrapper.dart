@@ -20,10 +20,11 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
-      return StreamProvider<DocumentSnapshot> (
-        create: (_) => DatabaseService(uid: user.uid).userDataDoc,
-        child: HomeWrapper(),
-      );
+//      return StreamProvider<DocumentSnapshot> (
+//        create: (_) => DatabaseService(uid: user.uid).userDataDoc,
+//        child: HomeWrapper(),
+//      );
+      return HomeWrapper();
     }
   }
 }

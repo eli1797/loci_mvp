@@ -239,8 +239,8 @@ class DatabaseService {
   }
 
   // Stream Document Snapshots of UserData
-  Stream<DocumentSnapshot> get userDataDoc {
-    return _userCollection.document(uid).snapshots();
+  Stream<List<UserData>> friendsUserData(UserData curUser) {
+//    return _userCollection.document(uid).snapshots();
   }
 
 }

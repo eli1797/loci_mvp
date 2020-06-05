@@ -32,7 +32,7 @@ class _MapTabState extends State<MapTab> {
   @override
   void initState() {
     super.initState();
-    _locationService.checkPermission();
+//    _locationService.checkPermission();
   }
 
   void _setupCamera(UserData userData) {
