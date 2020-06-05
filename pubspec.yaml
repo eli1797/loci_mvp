@@ -26,14 +26,19 @@ dependencies:
 
   geolocator: ^5.3.1
 
-  # Google firebase
+  # Google
+  # Firebase
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.6
+  # Maps
+  google_maps_flutter: ^0.5.28
 
+  #core package, endorsed by Google, state management
   provider: ^4.1.2
 
+  # used for the loading screen
   flutter_spinkit: "^4.1.2"
 
   # allows for local key-value store persistence
