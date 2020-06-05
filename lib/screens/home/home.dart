@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home_tab.dart';
+import 'package:mvp/screens/home/map_tab.dart';
 import 'package:mvp/screens/profile/profile.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
@@ -62,7 +63,7 @@ class _HomeState extends State<Home> {
         body: TabBarView(
           children: [
             HomeTab(),
-            Loading()
+            MapTab()
         ]
         )
 
