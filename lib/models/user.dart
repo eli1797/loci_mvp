@@ -13,12 +13,12 @@ class UserData {
 
   final String uid;
   final String firstName;
-  GeoPoint gfp;
+  GeoPoint gp;
   final List<String> closeFriendsUIdList;
 
 //  UserData({ this.uid, this.firstName, this.latitude, this.longitude, this.closeFriends });
 //  UserData({ this.uid, this.firstName, this.latitude, this.longitude });
-  UserData({ this.uid, this.firstName, this.gfp, this.closeFriendsUIdList });
+  UserData({ this.uid, this.firstName, this.gp, this.closeFriendsUIdList });
 
 
 }

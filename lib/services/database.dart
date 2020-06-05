@@ -128,7 +128,7 @@ class DatabaseService {
     return UserData(
       uid: documentSnapshot.documentID,
       firstName: documentSnapshot['firstName'],
-      gfp: documentSnapshot['position']['geopoint']
+      gp: documentSnapshot['position']['geopoint']
     );
   }
 
@@ -223,7 +223,7 @@ class DatabaseService {
       return UserData(
         uid: uid,
         firstName: documentSnapshot['firstName'] ?? "unnamed_member",
-        gfp: documentSnapshot['position']['geopoint'] ?? null,
+        gp: documentSnapshot['position']['geopoint'] ?? null,
         closeFriendsUIdList: documentSnapshot['closeFriendsUIdList']
             .cast<String>() ?? []
        );
@@ -231,7 +231,7 @@ class DatabaseService {
       return UserData(
         uid: uid,
         firstName: documentSnapshot['firstName'] ?? "unnamed_member",
-        gfp: null,
+        gp: null,
         closeFriendsUIdList: documentSnapshot['closeFriendsUIdList']
             .cast<String>() ?? []
       );
