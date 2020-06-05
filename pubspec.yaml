@@ -33,7 +33,7 @@ dependencies:
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.6
   # Maps
-  google_maps_flutter: ^0.5.28
+  google_maps_flutter: 0.5.28+1
 
   #core package, endorsed by Google, state management
   provider: ^4.1.2
