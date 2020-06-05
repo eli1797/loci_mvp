@@ -34,6 +34,7 @@ dependencies:
   cloud_firestore: ^0.13.6
   # Maps
   google_maps_flutter: 0.5.28+1
+  vector_math: any
 
   #core package, endorsed by Google, state management
   provider: ^4.1.2
