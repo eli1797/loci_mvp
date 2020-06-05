@@ -33,7 +33,6 @@ class _ProfileState extends State<Profile> {
       return StreamBuilder<UserData>(
           stream: DatabaseService(uid: user.uid).userData,
           builder: (context, snapshot) {
-            print("Snapshot: " + snapshot.toString());
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
               return Scaffold(
