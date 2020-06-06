@@ -10,6 +10,7 @@ class _BloopState extends State<Bloop> {
   String message_0 = "This sounds like some dessert!";
   String message_1 = "Little shopping list for you. Could you buy me\ "
       "ice cream, oreos, and nutella? I am making a dessert for the party";
+  String message_2 = 'What kind?';
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,7 @@ class _BloopState extends State<Bloop> {
           child: Column(
             children: <Widget>[
               _buildCard(Colors.blue, text: message_1),
+              _buildIndentedCard(Colors.deepPurpleAccent, text: message_2),
               _buildCard(Colors.deepPurpleAccent, text: message_0),
             ],
           )
@@ -55,7 +57,7 @@ class _BloopState extends State<Bloop> {
 
   Widget _buildIndentedCard(Color color, {String text = "no u"}) {
     return Align(
-      alignment: FractionalOffset(0.2, 0.2),
+      alignment: FractionalOffset(0.05, 0.2),
       child: Card(
         color: color,
         child: InkWell(
