@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
+import 'package:mvp/screens/bloop/bloop.dart';
 import 'package:mvp/screens/home/home_tab.dart';
 import 'package:mvp/screens/home/map_tab.dart';
 import 'package:mvp/screens/profile/profile.dart';
@@ -44,6 +45,14 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.blue,
           elevation: 0.0,
           actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.chat, color: Colors.black,),
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Bloop())
+                  );
+                }),
             IconButton(
               icon: Icon(Icons.account_circle, color: Colors.black,),
               onPressed: () async {
