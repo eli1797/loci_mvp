@@ -7,8 +7,10 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 
 class DatabaseService {
 
-  // collection reference
+  // collection references
   final CollectionReference _userCollection = Firestore.instance.collection('users');
+  final CollectionReference _friendCollection = Firestore.instance.collection('friends');
+  final CollectionReference _locationCollection = Firestore.instance.collection('locations');
 
   //GeoFlutterFire
   Geoflutterfire geo = Geoflutterfire();
@@ -37,19 +39,6 @@ class DatabaseService {
     //@Todo: validation here?
     return await _userCollection.document(uid).setData({
       'firstName': firstName
-    }, merge: true);
-  }
-
-  // create a geo fire point (lat, long) from a geolocator position
-  GeoFirePoint createGeoFirePointFromPosition (Position position) {
-    return geo.point(latitude: position.latitude, longitude: position.longitude);
-  }
-
-  // update the users position (geohash and geopoint (lat, long)) and altitude
-  Future updateLocationWithGeo (Position position) async {
-    GeoFirePoint gfp = createGeoFirePointFromPosition(position);
-    return await _userCollection.document(uid).setData({
-      'position': gfp.data,
     }, merge: true);
   }
 
@@ -298,7 +287,7 @@ class DatabaseService {
   // Add a friend
   Future addFriendByUID (String friendUId) async {
     try {
-      return await _userCollection.document(uid).setData({
+      return await _friendCollection.document(uid).setData({
         'closeFriendsUIdList': FieldValue.arrayUnion([friendUId])
       }, merge: true);
     } catch(e) {
@@ -310,7 +299,7 @@ class DatabaseService {
   // Remove a friend
   Future removeFriendByUID (String friendUId) async {
     try {
-      return await _userCollection.document(uid).setData({
+      return await _friendCollection.document(uid).setData({
         'closeFriendsUIdList': FieldValue.arrayRemove([friendUId])
       }, merge: true);
     } catch(e) {
@@ -318,5 +307,37 @@ class DatabaseService {
       return null;
     }
   }
+
+  // Stream
+
+
+  ///   Location Collection   ///
+
+  // Helpers
+  
+  GeoFirePoint createGeoFirePointFromPosition (Position position) {
+    return geo.point(latitude: position.latitude, longitude: position.longitude);
+  }
+
+  // Write
+
+  // One off write
+
+  // update the users position (geohash and geopoint (lat, long)) and altitude
+  Future updateLocationWithGeo (Position position) async {
+    try {
+      GeoFirePoint gfp = createGeoFirePointFromPosition(position);
+      return await _locationCollection.document(uid).setData({
+        'position': gfp.data,
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Watch position (Geolocator?) and on changed stream to firestore
+
+
 
 }
