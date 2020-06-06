@@ -14,13 +14,19 @@ class _BloopState extends State<Bloop> {
         backgroundColor: Colors.blue,
       ),
       body: Container(
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
         child: ListView.builder(
           itemCount: 5,
           itemBuilder: (_, i) {
+//            if (i.isEven) {
+//              return _buildBox(Colors.blue);
+//            } else {
+//              return _buildBox(Colors.deepPurpleAccent);
+//            }
             if (i.isEven) {
-              return _buildBox(Colors.blue);
+              return _buildCard(Colors.blue, true);
             } else {
-              return _buildBox(Colors.deepPurpleAccent);
+              return _buildCard(Colors.deepPurpleAccent, false);
             }
           },
         ),
@@ -28,8 +34,21 @@ class _BloopState extends State<Bloop> {
     );
   }
 
-  Widget _buildBox(Color color) {
-    BoxConstraints boxCon =  BoxConstraints(maxHeight: 50.0, maxWidth: 70.0);
+  Container _buildBox(Color color) {
+    BoxConstraints boxCon = BoxConstraints(maxHeight: 50.0, maxWidth: 50.0);
     return Container( margin: EdgeInsets.all(12), constraints: boxCon, color: color);
+  }
+
+  Widget _buildCard(Color color, bool alignLeft) {
+    return Align(
+      alignment: alignLeft ? Alignment.centerLeft : Alignment.centerRight,
+      child: Card(
+        color: color,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("No u"),
+        ),
+      ),
+    );
   }
 }
