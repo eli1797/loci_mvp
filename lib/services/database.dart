@@ -314,21 +314,22 @@ class DatabaseService {
   ///   Location Collection   ///
 
   // Helpers
-  
+
   GeoFirePoint createGeoFirePointFromPosition (Position position) {
     return geo.point(latitude: position.latitude, longitude: position.longitude);
   }
 
   // Write
 
-  // One off write
-
-  // update the users position (geohash and geopoint (lat, long)) and altitude
+  // one off update user's geohash, geopoint(lat, long), and altitude
   Future updateLocationWithGeo (Position position) async {
     try {
       GeoFirePoint gfp = createGeoFirePointFromPosition(position);
       return await _locationCollection.document(uid).setData({
-        'position': gfp.data,
+        'geoPoint': gfp.geoPoint,
+        'geoHash': gfp.hash,
+        'altitude': position.altitude,
+        //@TODO: add a timestamp here
       }, merge: true);
     } catch(e) {
       print(e.toString());
@@ -337,7 +338,7 @@ class DatabaseService {
   }
 
   // Watch position (Geolocator?) and on changed stream to firestore
-
+  //@TODO: Watch position ^
 
 
 }
