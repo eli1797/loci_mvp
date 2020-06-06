@@ -19,26 +19,13 @@ class _BloopState extends State<Bloop> {
         backgroundColor: Colors.blue,
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-        child: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (_, i) {
-//            if (i.isEven) {
-//              return _buildBox(Colors.blue);
-//            } else {
-//              return _buildBox(Colors.deepPurpleAccent);
-//            }
-            if (i == 4) {
-              return _buildCard(Colors.deepPurpleAccent, true, text: message_0);
-            } else if (i == 3) {
-              return _buildCard(Colors.blue, true, text: message_1);
-            } else if (i.isEven) {
-              return _buildCard(Colors.blue, true);
-            } else {
-              return _buildCard(Colors.deepPurpleAccent, true);
-            }
-          },
-        ),
+          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+          child: Column(
+            children: <Widget>[
+              _buildCard(Colors.deepPurpleAccent, true, text: message_0),
+              _buildCard(Colors.blue, true, text: message_1),
+            ],
+          )
       ),
     );
   }
