@@ -31,6 +31,7 @@ class DatabaseService {
     }, merge: true);
   }
 
+
   //update a user's firstName
   Future updateName (String firstName) async {
     //@Todo: validation here?
@@ -239,8 +240,83 @@ class DatabaseService {
   }
 
   // Stream Document Snapshots of UserData
-  Stream<List<UserData>> friendsUserData(UserData curUser) {
+//  Stream<List<UserData>> friendsUserData(UserData curUser) {
 //    return _userCollection.document(uid).snapshots();
+//  }
+
+
+  ////    NEW    ////
+
+  ///   User Collection   ///
+
+  // Write
+
+  // write to update user collection
+  Future updateUsersCollectionDocument (String firstName, String status) async {
+    try {
+      return await _userCollection.document(uid).setData({
+        'firstName': firstName,
+        'status': status
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  //update a user's firstName
+  Future updateUsersCollectionName (String firstName) async {
+    //@Todo: validation here?
+    try {
+      return await _userCollection.document(uid).setData({
+        'firstName': firstName
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  //update a user's status
+  Future updateUsersCollectionStatus (String status) async {
+    //@Todo: validation here?
+    try {
+      return await _userCollection.document(uid).setData({
+        'status': status
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+
+  ///   Friends Collection   ///
+
+  // Write
+
+  // Add a friend
+  Future addFriendByUID (String friendUId) async {
+    try {
+      return await _userCollection.document(uid).setData({
+        'closeFriendsUIdList': FieldValue.arrayUnion([friendUId])
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Remove a friend
+  Future removeFriendByUID (String friendUId) async {
+    try {
+      return await _userCollection.document(uid).setData({
+        'closeFriendsUIdList': FieldValue.arrayRemove([friendUId])
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
   }
 
 }
