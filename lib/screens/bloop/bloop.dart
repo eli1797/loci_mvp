@@ -6,6 +6,7 @@ class Bloop extends StatefulWidget {
 }
 
 class _BloopState extends State<Bloop> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,14 +17,16 @@ class _BloopState extends State<Bloop> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
         child: ListView.builder(
-          itemCount: 5,
+          itemCount: 4,
           itemBuilder: (_, i) {
 //            if (i.isEven) {
 //              return _buildBox(Colors.blue);
 //            } else {
 //              return _buildBox(Colors.deepPurpleAccent);
 //            }
-            if (i.isEven) {
+            if (i >= 3) {
+              return _buildCard(Colors.blue, true);
+            } else if (i.isEven) {
               return _buildCard(Colors.blue, true);
             } else {
               return _buildCard(Colors.deepPurpleAccent, false);
@@ -44,9 +47,14 @@ class _BloopState extends State<Bloop> {
       alignment: alignLeft ? Alignment.centerLeft : Alignment.centerRight,
       child: Card(
         color: color,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("No u"),
+        child: InkWell(
+          onTap: () {
+            print("Tapped");
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("No u"),
+          ),
         ),
       ),
     );
