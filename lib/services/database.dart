@@ -25,7 +25,7 @@ class DatabaseService {
 
   //update all user data
   Future updateUserData (String firstName, Position position, List<User> closeFriends) async {
-    GeoFirePoint gfp = createGeoFirePointFromPosition(position);
+    GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
     return await _userCollection.document(uid).setData({
       'firstName': firstName,
       'position': gfp.data,
@@ -175,7 +175,7 @@ class DatabaseService {
   // Query a collection for Document Snapshots within range of a position
   Stream<List<DocumentSnapshot>> queryFriendsWithinRange(Position position, double rangeInKM) {
     try {
-      GeoFirePoint gfpQueryPoint = createGeoFirePointFromPosition(position);
+      GeoFirePoint gfpQueryPoint = _createGeoFirePointFromPosition(position);
       //This doesn't work unless the closeFriends data are duplicated
       var geoRef = geo.collection(collectionRef: _userCollection.document(uid).collection("closeFriends"));
       Stream<List<DocumentSnapshot>> result = geoRef.within(center: gfpQueryPoint,
@@ -241,9 +241,9 @@ class DatabaseService {
   // Write
 
   // write to update user collection
-  Future updateUsersCollectionDocument (String firstName, String status) async {
+  Future _updateUsersCollectionDocument (String firstName, String status) async {
     try {
-      return await _userCollection.document(uid).setData({
+      return await _userCollection.document(this.uid).setData({
         'firstName': firstName,
         'status': status
       }, merge: true);
@@ -254,10 +254,10 @@ class DatabaseService {
   }
 
   //update a user's firstName
-  Future updateUsersCollectionName (String firstName) async {
+  Future _updateUsersCollectionName (String firstName) async {
     //@Todo: validation here? Probably some in the ui elements that call this
     try {
-      return await _userCollection.document(uid).setData({
+      return await _userCollection.document(this.uid).setData({
         'firstName': firstName
       }, merge: true);
     } catch(e) {
@@ -267,10 +267,10 @@ class DatabaseService {
   }
 
   //update a user's status
-  Future updateUsersCollectionStatus (String status) async {
+  Future _updateUsersCollectionStatus (String status) async {
     //@Todo: validation here? Probably in the UI elements that make this call
     try {
-      return await _userCollection.document(uid).setData({
+      return await _userCollection.document(this.uid).setData({
         'status': status
       }, merge: true);
     } catch(e) {
@@ -285,9 +285,9 @@ class DatabaseService {
   // Write
 
   // Add a friend
-  Future addFriendByUID (String friendUId) async {
+  Future _addFriendByUID (String friendUId) async {
     try {
-      return await _friendCollection.document(uid).setData({
+      return await _friendCollection.document(this.uid).setData({
         'closeFriendsUIdList': FieldValue.arrayUnion([friendUId])
       }, merge: true);
     } catch(e) {
@@ -297,9 +297,9 @@ class DatabaseService {
   }
 
   // Remove a friend
-  Future removeFriendByUID (String friendUId) async {
+  Future _removeFriendByUID (String friendUId) async {
     try {
-      return await _friendCollection.document(uid).setData({
+      return await _friendCollection.document(this.uid).setData({
         'closeFriendsUIdList': FieldValue.arrayRemove([friendUId])
       }, merge: true);
     } catch(e) {
@@ -308,24 +308,38 @@ class DatabaseService {
     }
   }
 
-  // Stream
+  // Stream a user by UId
+  Stream<UserData> _streamUserDataByUId(String userUid) {
+      return _userCollection.document(userUid).snapshots()
+          .map(_createUserDataFromSnapshot);
+  }
 
+  // Helper
+  // userData object from DocumentSnapshot
+  UserData _createUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
+    //@ToDo: refactor the UserData class
+
+    try {
+      return UserData(
+          uid: documentSnapshot.documentID,
+          firstName: documentSnapshot['firstName'] ?? "unnamed_member",
+//          status: documentSnapshot['status'] ?? null,
+      );
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
   ///   Location Collection   ///
-
-  // Helpers
-
-  GeoFirePoint createGeoFirePointFromPosition (Position position) {
-    return geo.point(latitude: position.latitude, longitude: position.longitude);
-  }
 
   // Write
 
   // one off update user's geohash, geopoint(lat, long), and altitude
   Future updateLocationWithGeo (Position position) async {
     try {
-      GeoFirePoint gfp = createGeoFirePointFromPosition(position);
-      return await _locationCollection.document(uid).setData({
+      GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
+      return await _locationCollection.document(this.uid).setData({
         'geoPoint': gfp.geoPoint,
         'geoHash': gfp.hash,
         'altitude': position.altitude,
@@ -335,6 +349,11 @@ class DatabaseService {
       print(e.toString());
       return null;
     }
+  }
+
+  // Helper
+  GeoFirePoint _createGeoFirePointFromPosition (Position position) {
+    return geo.point(latitude: position.latitude, longitude: position.longitude);
   }
 
   // Watch position (Geolocator?) and on changed stream to firestore
