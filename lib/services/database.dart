@@ -153,7 +153,7 @@ class DatabaseService {
     }
   }
 
-  // get a List of UserData, getting uids from the list in the users document
+  // Get a List of UserData, getting uids from the list in the users document
   Future<List<UserData>> queryFriendsFromList() async {
     List friendsUIds = [];
     await _userCollection.document(uid).get().then((value) => friendsUIds = value.data['closeFriendsUIdList']);
@@ -206,7 +206,7 @@ class DatabaseService {
         .map(_thisUserDataFromSnapshot);
   }
 
-  // userData object from DocumentSnapshot
+  // UserData object from DocumentSnapshot
   UserData _thisUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
 
     try {
@@ -240,7 +240,7 @@ class DatabaseService {
 
   // Write
 
-  // write to update user collection
+  // Write to update user collection
   Future _updateUsersCollectionDocument (String firstName, String status) async {
     try {
       return await _userCollection.document(this.uid).setData({
@@ -253,7 +253,7 @@ class DatabaseService {
     }
   }
 
-  //update a user's firstName
+  // Update a user's firstName
   Future _updateUsersCollectionName (String firstName) async {
     //@Todo: validation here? Probably some in the ui elements that call this
     try {
@@ -266,7 +266,7 @@ class DatabaseService {
     }
   }
 
-  //update a user's status
+  // Update a user's status
   Future _updateUsersCollectionStatus (String status) async {
     //@Todo: validation here? Probably in the UI elements that make this call
     try {
@@ -343,6 +343,7 @@ class DatabaseService {
         'geoPoint': gfp.geoPoint,
         'geoHash': gfp.hash,
         'altitude': position.altitude,
+        'lastUpdated': Timestamp.now()
         //@TODO: add a timestamp here
       }, merge: true);
     } catch(e) {
