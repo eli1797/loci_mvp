@@ -245,7 +245,8 @@ class DatabaseService {
     try {
       return await _userCollection.document(this.uid).setData({
         'firstName': firstName,
-        'status': status
+        'status': status,
+        'lastUpdated': Timestamp.now()
       }, merge: true);
     } catch(e) {
       print(e.toString());
@@ -271,7 +272,8 @@ class DatabaseService {
     //@Todo: validation here? Probably in the UI elements that make this call
     try {
       return await _userCollection.document(this.uid).setData({
-        'status': status
+        'status': status,
+        'lastUpdated': Timestamp.now()
       }, merge: true);
     } catch(e) {
       print(e.toString());
@@ -344,7 +346,6 @@ class DatabaseService {
         'geoHash': gfp.hash,
         'altitude': position.altitude,
         'lastUpdated': Timestamp.now()
-        //@TODO: add a timestamp here
       }, merge: true);
     } catch(e) {
       print(e.toString());
