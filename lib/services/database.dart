@@ -281,6 +281,12 @@ class DatabaseService {
     }
   }
 
+  // Stream the users name and status
+  Stream <UserData> streamthisUserData() {
+    _userCollection.document(this.uid).snapshots()
+        .map(_createUserDataFromSnapshot);
+  }
+
 
   ///   Friends Collection   ///
 
@@ -312,8 +318,7 @@ class DatabaseService {
 
   // Stream a user by UId
   Stream<UserData> _streamUserDataByUId(String userUid) {
-      return _userCollection.document(userUid).snapshots()
-          .map(_createUserDataFromSnapshot);
+
   }
 
   // Helper
@@ -325,7 +330,7 @@ class DatabaseService {
       return UserData(
           uid: documentSnapshot.documentID,
           firstName: documentSnapshot['firstName'] ?? "unnamed_member",
-//          status: documentSnapshot['status'] ?? null,
+          status: documentSnapshot['status'] ?? null,
       );
     } catch(e) {
       print(e.toString());
@@ -347,6 +352,27 @@ class DatabaseService {
         'altitude': position.altitude,
         'lastUpdated': Timestamp.now()
       }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Stream the users name and status
+  Stream<UserLocation> streamthisUserLocation() {
+    _locationCollection.document(this.uid).snapshots()
+        .map(_createUserLocationFromSnapshot);
+  }
+
+  UserLocation _createUserLocationFromSnapshot(DocumentSnapshot documentSnapshot) {
+    try {
+      return UserLocation(
+        uid: documentSnapshot.documentID,
+        altitude: documentSnapshot['altitude'],
+        geoHash: documentSnapshot['geoHash'],
+        geoPoint: documentSnapshot['geoPoint'],
+        lastUpdated: documentSnapshot['lastUpdated']
+      );
     } catch(e) {
       print(e.toString());
       return null;

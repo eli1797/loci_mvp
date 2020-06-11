@@ -13,13 +13,25 @@ class UserData {
 
   final String uid;
   final String firstName;
-  GeoPoint gp;
-  final List<String> closeFriendsUIdList;
+  final String status;
+//  GeoPoint gp;
+//  final List<String> closeFriendsUIdList;
 
 //  UserData({ this.uid, this.firstName, this.latitude, this.longitude, this.closeFriends });
 //  UserData({ this.uid, this.firstName, this.latitude, this.longitude });
-  UserData({ this.uid, this.firstName, this.gp, this.closeFriendsUIdList });
+//  UserData({ this.uid, this.firstName, this.gp, this.closeFriendsUIdList });
+  UserData({ this.uid, this.firstName, this.status});
 
+}
 
+class UserLocation {
+
+  final String uid;
+  final double altitude;
+  final String geoHash;
+  final GeoPoint geoPoint;
+  final Timestamp lastUpdated;
+
+  UserLocation({ this.uid, this.altitude, this.geoHash, this.geoPoint, this.lastUpdated });
 }
 

@@ -92,8 +92,7 @@ class _HomeTabState extends State<HomeTab> {
               friends.forEach((element) async {
                 print(element.uid);
                 print(element.firstName);
-                print(element.gp.longitude);
-                print(element.gp.latitude);
+                print(element.status);
                 print("");
               });
             },

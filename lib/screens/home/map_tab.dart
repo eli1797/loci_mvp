@@ -35,25 +35,27 @@ class _MapTabState extends State<MapTab> {
 //    _locationService.checkPermission();
   }
 
-  void _setupCamera(UserData userData) {
-    _startPos = _createCameraPositionFromGP(userData.gp);
-    _cameraTargetBounds = _createMapBoundsFromGeoPoint(userData.gp, 50);
+  void _setupCamera(UserLocation userLocation) {
+    // set the camera start position to be on the user
+    _startPos = _createCameraPositionFromGP(userLocation.geoPoint);
+
+    // set the camera bounds
+    //_cameraTargetBounds = _createMapBoundsFromGeoPoint(userData.gp, 50);
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData,
+    return StreamBuilder<UserLocation>(
+        stream: DatabaseService(uid: user.uid).streamthisUserLocation(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            UserData userData = snapshot.data;
+            UserLocation userLocation = snapshot.data;
 
-            _setupCamera(userData);
+            _setupCamera(userLocation);
 
-            print(userData.firstName);
-            print(userData.gp);
+            print(userLocation.uid);
 
             return Container(
               height: MediaQuery
@@ -67,7 +69,7 @@ class _MapTabState extends State<MapTab> {
               child: GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: _startPos,
-                cameraTargetBounds: _cameraTargetBounds,
+                //cameraTargetBounds: _cameraTargetBounds,
                 myLocationEnabled: true,
                 onMapCreated: (GoogleMapController controller) {
                   setState(() {
