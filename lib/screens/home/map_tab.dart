@@ -49,7 +49,7 @@ class _MapTabState extends State<MapTab> {
 
     print(user);
     return StreamBuilder<UserLocation>(
-        stream: DatabaseService(uid: user.uid).streamthisUserLocation(),
+        stream: DatabaseService(uid: user.uid).streamThisUserLocation(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             UserLocation userLocation = snapshot.data;

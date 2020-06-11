@@ -282,7 +282,7 @@ class DatabaseService {
   }
 
   // Stream the users name and status
-  Stream <UserData> streamthisUserData() {
+  Stream <UserData> streamThisUserData() {
     try {
       return _userCollection.document(this.uid).snapshots()
           .map(_createUserDataFromSnapshot);
@@ -364,7 +364,7 @@ class DatabaseService {
   }
 
   // Stream the users name and status
-  Stream<UserLocation> streamthisUserLocation() {
+  Stream<UserLocation> streamThisUserLocation() {
     try {
       return _locationCollection.document(this.uid).snapshots()
           .map(_createUserLocationFromSnapshot);

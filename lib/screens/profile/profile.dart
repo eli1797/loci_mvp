@@ -31,7 +31,7 @@ class _ProfileState extends State<Profile> {
       print(user);
 
       return StreamBuilder<UserData>(
-          stream: DatabaseService(uid: user.uid).streamthisUserData(),
+          stream: DatabaseService(uid: user.uid).streamThisUserData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
