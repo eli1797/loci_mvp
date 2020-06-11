@@ -77,6 +77,17 @@ class _ProfileState extends State<Profile> {
                                     val);
                               },
                             ),
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Current status',
+                              ),
+                              initialValue: userData.status,
+                              onFieldSubmitted: (val) async {
+                                await DatabaseService(uid: user.uid).updateStatus(
+                                    val);
+                              },
+                            ),
                           ],
                         ),
                       )

@@ -255,7 +255,7 @@ class DatabaseService {
   }
 
   // Update a user's firstName
-  Future updateFirstName (String firstName) async {
+  Future updateFirstName(String firstName) async {
     //@Todo: validation here? Probably some in the ui elements that call this
     try {
       return await _userCollection.document(this.uid).setData({
@@ -268,7 +268,7 @@ class DatabaseService {
   }
 
   // Update a user's status
-  Future _updateUsersCollectionStatus (String status) async {
+  Future updateStatus(String status) async {
     //@Todo: validation here? Probably in the UI elements that make this call
     try {
       return await _userCollection.document(this.uid).setData({
