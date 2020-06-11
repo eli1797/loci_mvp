@@ -77,7 +77,7 @@ class _FirstTimeSetupState extends State<FirstTimeSetup> {
                       error = '';
                       setState(() => _loading = true);
                       dynamic result = await DatabaseService(uid: user.uid)
-                          .updateName(_currentFirstName);
+                          .updateFirstName(_currentFirstName);
                       if (result != null) {
                         setState(() {
                           error = 'Failed login. Incorrect credentials';

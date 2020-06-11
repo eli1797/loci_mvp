@@ -31,7 +31,7 @@ class _ProfileState extends State<Profile> {
       print(user);
 
       return StreamBuilder<UserData>(
-          stream: DatabaseService(uid: user.uid).userData,
+          stream: DatabaseService(uid: user.uid).streamthisUserData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
@@ -73,7 +73,7 @@ class _ProfileState extends State<Profile> {
                               ),
                               initialValue: userData.firstName,
                               onFieldSubmitted: (val) async {
-                                await DatabaseService(uid: user.uid).updateName(
+                                await DatabaseService(uid: user.uid).updateFirstName(
                                     val);
                               },
                             ),

@@ -47,6 +47,7 @@ class _MapTabState extends State<MapTab> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
+    print(user);
     return StreamBuilder<UserLocation>(
         stream: DatabaseService(uid: user.uid).streamthisUserLocation(),
         builder: (context, snapshot) {

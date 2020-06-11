@@ -73,11 +73,10 @@ class _HomeTabState extends State<HomeTab> {
           SizedBox(height: 20.0),
           RaisedButton(
             color:  Colors.blue,
-            child: Text('Add friend by FirstName'),
+            child: Text('Add friend by UID'),
             onPressed: () async {
               print("_currentFriendName: " + _controller.text);
-              await _databaseService.addFriendByFirstName(_controller.text);
-              await _databaseService.addFriendByFirstNameToList(_controller.text);
+              await _databaseService.addFriendByUID(_controller.text);
               _controller.clear();
             },
           ),
@@ -86,15 +85,7 @@ class _HomeTabState extends State<HomeTab> {
             color:  Colors.blue,
             child: Text('Query My Friends'),
             onPressed: () async {
-
-              List<UserData> friends = await _databaseService.queryFriendsFromList();
-
-              friends.forEach((element) async {
-                print(element.uid);
-                print(element.firstName);
-                print(element.status);
-                print("");
-              });
+              print("Right now this button does nothing");
             },
           )
         ],
