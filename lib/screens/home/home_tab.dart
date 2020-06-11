@@ -21,13 +21,6 @@ class _HomeTabState extends State<HomeTab> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 
-
-  @override
-  void initState() {
-    super.initState();
-    _locationService.checkPermission();
-  }
-
   @override
   void dispose(){
     _controller.dispose();

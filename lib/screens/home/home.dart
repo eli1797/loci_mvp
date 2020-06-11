@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
@@ -21,10 +23,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  final AuthService _authService = AuthService();
+  DatabaseService _databaseService;
+  final LocationService _locationService = LocationService();
 
+  StreamSubscription _locationSub;
 
+  @override
+  void initState() {
+    super.initState();
+    _locationService.checkPermission();
+    _locationSub = _locationService.positionStream().listen((Position position) {
+      print("Location changed");
+      _databaseService.updateLocationWithGeo(position);
+    });
+  }
 
+  @override
+  void dispose(){
+    _locationSub.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +52,8 @@ class _HomeState extends State<Home> {
     if (user == null) {
       return Authenticate();
     }
+
+    _databaseService = DatabaseService(uid: user.uid);
 
     return DefaultTabController(
       length: 2,

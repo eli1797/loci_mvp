@@ -18,6 +18,8 @@ class DatabaseService {
   // id unique to user
   final String uid;
 
+  //
+
   // constructor
   DatabaseService({ this.uid });
 
@@ -282,7 +284,7 @@ class DatabaseService {
   }
 
   // Stream the users name and status
-  Stream <UserData> streamThisUserData() {
+  Stream<UserData> streamThisUserData() {
     try {
       return _userCollection.document(this.uid).snapshots()
           .map(_createUserDataFromSnapshot);
@@ -291,7 +293,6 @@ class DatabaseService {
       return null;
     }
   }
-
 
   ///   Friends Collection   ///
 

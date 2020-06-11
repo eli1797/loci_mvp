@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
@@ -30,5 +32,10 @@ class LocationService {
 
   Future<double> distanceFromMe(Position myPos, double lat, double long) async {
     return _geolocator.distanceBetween(myPos.latitude, myPos.longitude, lat, long);
+  }
+
+  Stream<Position> positionStream({accuracy = LocationAccuracy.bestForNavigation, distanceFilter = 1}) {
+    LocationOptions locationOptions = LocationOptions(accuracy: accuracy, distanceFilter: distanceFilter);
+    return _geolocator.getPositionStream(locationOptions);
   }
 }
