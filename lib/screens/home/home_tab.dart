@@ -20,8 +20,6 @@ class _HomeTabState extends State<HomeTab> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 
-  var _sliderVal = 0.0;
-
   @override
   void dispose(){
     _controller.dispose();
@@ -38,20 +36,6 @@ class _HomeTabState extends State<HomeTab> {
       padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
       child: Column(
         children: <Widget>[
-          SizedBox(height: 20.0),
-          Slider.adaptive(
-            min: 0,
-            max: 3,
-            divisions: 2,
-            value: _sliderVal,
-            label: ,
-            onChanged: (val) {
-              setState(() {
-                _sliderVal = val;
-                print(_sliderVal);
-              });
-            }
-          ),
           SizedBox(height: 20.0),
           RaisedButton(
             color:  Colors.blue,
