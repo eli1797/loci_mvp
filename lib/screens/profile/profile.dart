@@ -82,7 +82,7 @@ class _ProfileState extends State<Profile> {
                               decoration: InputDecoration(
                                 labelText: 'Current status',
                               ),
-                              initialValue: userData.status,
+                              initialValue: userData.status ?? '',
                               onFieldSubmitted: (val) async {
                                 await DatabaseService(uid: user.uid).updateStatus(
                                     val);
