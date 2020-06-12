@@ -35,9 +35,9 @@ class _ProfileState extends State<Profile> {
       _sliderLabel[0.0] = "Hidden";
       _sliderLabel[1.0] = "Close Friends Only";
       _sliderLabel[2.0] = "Open";
-      _sliderColor[0.0] = Colors.blue[100];
+      _sliderColor[0.0] = Colors.grey;
       _sliderColor[1.0] = Colors.blue[300];
-      _sliderColor[2.0] = Colors.blue[500];
+      _sliderColor[2.0] = Colors.green[500];
 
       print(user);
 
@@ -92,7 +92,7 @@ class _ProfileState extends State<Profile> {
                             SizedBox(height: 20.0),
                             TextFormField(
                               decoration: InputDecoration(
-                                labelText: 'Current status',
+                                labelText: 'Currently',
                               ),
                               initialValue: userData.status ?? '',
                               onFieldSubmitted: (val) async {
