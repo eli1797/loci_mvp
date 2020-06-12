@@ -57,7 +57,6 @@ class _HomeState extends State<Home> {
     _databaseService = DatabaseService(uid: user.uid);
 
     final userData = Provider.of<UserData>(context);
-    print("Openness" + userData.openness.toString());
 
     return DefaultTabController(
       length: 2,

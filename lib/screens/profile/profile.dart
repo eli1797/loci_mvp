@@ -21,9 +21,6 @@ class _ProfileState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
 
   double _sliderVal;
-//  Map _sliderLabel = Map();
-//  Map _sliderColor = Map();
-
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +29,6 @@ class _ProfileState extends State<Profile> {
     if (user == null) {
       return Authenticate();
     } else {
-
-//      _sliderLabel[0.0] = "Hidden";
-//      _sliderLabel[1.0] = "Close Friends Only";
-//      _sliderLabel[2.0] = "Open";
-//      _sliderColor[0.0] = Colors.grey;
-//      _sliderColor[1.0] = Colors.blue[300];
-//      _sliderColor[2.0] = Colors.green[500];
-
-      print(user);
-
       return StreamBuilder<UserData>(
           stream: DatabaseService(uid: user.uid).streamThisUserData(),
           builder: (context, snapshot) {

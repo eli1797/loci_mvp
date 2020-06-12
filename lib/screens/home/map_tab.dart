@@ -47,7 +47,6 @@ class _MapTabState extends State<MapTab> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    print(user);
     return StreamBuilder<UserLocation>(
         stream: DatabaseService(uid: user.uid).streamThisUserLocation(),
         builder: (context, snapshot) {
@@ -55,8 +54,6 @@ class _MapTabState extends State<MapTab> {
             UserLocation userLocation = snapshot.data;
 
             _setupCamera(userLocation);
-
-            print(userLocation.uid);
 
             return Container(
               height: MediaQuery
