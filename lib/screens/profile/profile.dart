@@ -21,6 +21,7 @@ class _ProfileState extends State<Profile> {
 
   double _sliderVal;
   Map _sliderLabel = Map();
+  Map _sliderColor = Map();
 
 
   @override
@@ -34,6 +35,10 @@ class _ProfileState extends State<Profile> {
       _sliderLabel[0.0] = "Hidden";
       _sliderLabel[1.0] = "Close Friends Only";
       _sliderLabel[2.0] = "Open";
+      _sliderColor[0.0] = Colors.blue[100];
+      _sliderColor[1.0] = Colors.blue[300];
+      _sliderColor[2.0] = Colors.blue[500];
+
       print(user);
 
       return StreamBuilder<UserData>(
@@ -42,6 +47,7 @@ class _ProfileState extends State<Profile> {
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
               return Scaffold(
+                  resizeToAvoidBottomInset: false,
                   appBar: AppBar(
                     title: Text("Profile"),
                     actions: <Widget>[
@@ -102,6 +108,8 @@ class _ProfileState extends State<Profile> {
                                 divisions: 2,
                                 value: _sliderVal ?? 0.0,
                                 label: _sliderLabel[_sliderVal],
+                                activeColor: _sliderColor[_sliderVal],
+                                inactiveColor: _sliderColor[_sliderVal],
                                 onChanged: (val) {
                                   setState(() {
                                     _sliderVal = val;
