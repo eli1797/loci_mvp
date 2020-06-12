@@ -110,10 +110,11 @@ class _ProfileState extends State<Profile> {
                                 label: _sliderLabel[_sliderVal],
                                 activeColor: _sliderColor[_sliderVal],
                                 inactiveColor: _sliderColor[_sliderVal],
-                                onChanged: (val) {
+                                onChanged: (val) async {
                                   setState(() {
                                     _sliderVal = val;
                                   });
+                                  await DatabaseService(uid: user.uid).updateOpenness(val);
                                 })
                           ],
                         ),
