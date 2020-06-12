@@ -4,6 +4,7 @@ import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home.dart';
 import 'package:mvp/screens/profile/first_time_setup.dart';
+import 'package:mvp/services/database.dart';
 import 'package:mvp/services/local_persistence.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,21 +35,14 @@ class _HomeWrapperState extends State<HomeWrapper> {
 
   @override
   Widget build(BuildContext context) {
-
-//    _loadOnBoarded();
-//
-//    print("home onboarded: " + _hasOnboarded.toString());
-//
-//    if (_hasOnboarded != null && _hasOnboarded) {
-//      return Home();
-//    } else {
-//      return FirstTimeSetup();
-//    }
     final user = Provider.of<User>(context);
     if (user == null) {
       return Authenticate();
     } else {
-      return Home();
+      return StreamProvider<UserData> (
+        create: (_) => DatabaseService(uid: user.uid).streamThisUserData(),
+        child: Home(),
+      );
     }
   }
 }

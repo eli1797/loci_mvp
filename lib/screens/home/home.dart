@@ -11,6 +11,7 @@ import 'package:mvp/screens/profile/profile.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
 import 'package:mvp/services/location.dart';
+import 'package:mvp/shared/constants.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -55,6 +56,9 @@ class _HomeState extends State<Home> {
 
     _databaseService = DatabaseService(uid: user.uid);
 
+    final userData = Provider.of<UserData>(context);
+    print("Openness" + userData.openness.toString());
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -69,7 +73,7 @@ class _HomeState extends State<Home> {
               height: 15.0,
               width: 15.0,
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Constants.sliderColor[userData.openness],
                 shape: BoxShape.circle,
               ),
             ),

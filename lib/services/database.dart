@@ -99,7 +99,7 @@ class DatabaseService {
           uid: documentSnapshot.documentID,
           firstName: documentSnapshot['firstName'] ?? "unnamed_member",
           status: documentSnapshot['status'] ?? null,
-          openness: documentSnapshot['openness'] ?? 0.0
+          openness: documentSnapshot['openness'].toDouble() ?? 0.0
       );
     } catch(e) {
       print(e.toString());
