@@ -88,6 +88,10 @@ class _ProfileState extends State<Profile> {
                                     val);
                               },
                             ),
+                            SizedBox(height: 20.0),
+//                            Slider.adaptive(
+//                                value: null,
+//                                onChanged: null)
                           ],
                         ),
                       )

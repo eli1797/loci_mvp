@@ -65,14 +65,14 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.blue,
           elevation: 0.0,
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.chat, color: Colors.black,),
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Bloop())
-                  );
-                }),
+            Container(
+              height: 15.0,
+              width: 15.0,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.account_circle, color: Colors.black,),
               onPressed: () async {
