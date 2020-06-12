@@ -18,8 +18,6 @@ class DatabaseService {
   // id unique to user
   final String uid;
 
-  //
-
   // constructor
   DatabaseService({ this.uid });
 

@@ -18,7 +18,10 @@ class _ProfileState extends State<Profile> {
 
   // first name text editing
   final _formKey = GlobalKey<FormState>();
-  String _currentFirstName;
+
+  double _sliderVal;
+  Map _sliderLabel = Map();
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,9 @@ class _ProfileState extends State<Profile> {
       return Authenticate();
     } else {
 
+      _sliderLabel[0.0] = "Hidden";
+      _sliderLabel[1.0] = "Close Friends Only";
+      _sliderLabel[2.0] = "Open";
       print(user);
 
       return StreamBuilder<UserData>(
@@ -89,9 +95,18 @@ class _ProfileState extends State<Profile> {
                               },
                             ),
                             SizedBox(height: 20.0),
-//                            Slider.adaptive(
-//                                value: null,
-//                                onChanged: null)
+                            Text("Openness"),
+                            Slider.adaptive(
+                                min: 0.0,
+                                max: 2,
+                                divisions: 2,
+                                value: _sliderVal ?? 0.0,
+                                label: _sliderLabel[_sliderVal],
+                                onChanged: (val) {
+                                  setState(() {
+                                    _sliderVal = val;
+                                  });
+                                })
                           ],
                         ),
                       )
