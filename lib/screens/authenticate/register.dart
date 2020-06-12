@@ -29,7 +29,6 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
 
     final user = Provider.of<User>(context);
-    print(user);
 
     return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,

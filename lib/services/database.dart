@@ -26,7 +26,7 @@ class DatabaseService {
   // Write
 
   // Write to update user collection
-  Future _updateUsersCollectionDocument (String firstName, String status, double openness) async {
+  Future updateThisUserDocument ({String firstName, String status = '', double openness = 0.0}) async {
     try {
       return await _userCollection.document(this.uid).setData({
         'firstName': firstName,
@@ -99,7 +99,7 @@ class DatabaseService {
           uid: documentSnapshot.documentID,
           firstName: documentSnapshot['firstName'] ?? "unnamed_member",
           status: documentSnapshot['status'] ?? null,
-          openness: documentSnapshot['openness'].toDouble() ?? 0.0
+          openness: (documentSnapshot['openness'] ?? 0.0).toDouble()
       );
     } catch(e) {
       print(e.toString());

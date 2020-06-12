@@ -58,47 +58,51 @@ class _HomeState extends State<Home> {
 
     final userData = Provider.of<UserData>(context);
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text('Loci'),
-          backgroundColor: Colors.blue,
-          elevation: 0.0,
-          actions: <Widget>[
-            Container(
-              height: 15.0,
-              width: 15.0,
-              decoration: BoxDecoration(
-                color: Constants.sliderColor[userData.openness],
-                shape: BoxShape.circle,
+    if (userData != null) {
+      return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: Text('Loci'),
+              backgroundColor: Colors.blue,
+              elevation: 0.0,
+              actions: <Widget>[
+                Container(
+                  height: 15.0,
+                  width: 15.0,
+                  decoration: BoxDecoration(
+                    color: Constants.sliderColor[userData.openness ?? 0.0],
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                IconButton(
+                    icon: Icon(Icons.account_circle, color: Colors.black,),
+                    onPressed: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Profile())
+                      );
+                    })
+              ],
+              bottom: TabBar(
+                tabs: <Widget>[
+                  Tab(icon: Icon(Icons.home)),
+                  Tab(icon: Icon(Icons.near_me)),
+                ],
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.account_circle, color: Colors.black,),
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Profile())
-                );
-              })
-          ],
-          bottom: TabBar(
-            tabs: <Widget>[
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.near_me)),
-            ],
-          ),
+            body: TabBarView(
+                children: [
+                  HomeTab(),
+                  MapTab()
+                ]
+            )
         ),
-        body: TabBarView(
-          children: [
-            HomeTab(),
-            MapTab()
-        ]
-        )
-      ),
-    );
+      );
+    } else {
+      return Loading();
+    }
   }
 }
