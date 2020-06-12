@@ -77,7 +77,8 @@ class _HomeTabState extends State<HomeTab> {
             color:  Colors.blue,
             child: Text('Query My Friends'),
             onPressed: () async {
-              print("Right now this button does nothing");
+              print("Pressed");
+              await _databaseService.streamFriends();
             },
           )
         ],

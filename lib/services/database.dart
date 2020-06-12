@@ -135,6 +135,12 @@ class DatabaseService {
     }
   }
 
+  Map<UserData, UserLocation> streamFriends() {
+    List friendUIdList = [];
+
+    print(friendUIdList);
+  }
+
   // Stream a user by UId
   Stream<UserData> _streamUserDataByUId(String userUid) {
 

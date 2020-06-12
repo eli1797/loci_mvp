@@ -36,3 +36,11 @@ class UserLocation {
   UserLocation({ this.uid, this.altitude, this.geoHash, this.geoPoint, this.lastUpdated });
 }
 
+class UserFriends {
+
+  final String uid;
+  List<String> friendUIds;
+
+  UserFriends({ this.uid, this.friendUIds});
+}
+
