@@ -91,6 +91,17 @@ class DatabaseService {
     }
   }
 
+  // Stream the users name and status
+  Stream<UserData> streamUserDataByUId(String userUId) {
+    try {
+      return _userCollection.document(userUId).snapshots()
+          .map(_createUserDataFromSnapshot);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   // Helper
   // userData object from DocumentSnapshot
   UserData _createUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
@@ -162,24 +173,49 @@ class DatabaseService {
       print("Result: " + result.toString());
       return result;
     });
-
-
-
   }
+
+  Stream<List<UserData>> streamFriendsData() async* {
+    await for (var userFriend in streamThisUserFriends()) {
+      await for (var userData in streamUserDataList(userFriend.friendUIds))
+        yield userData;
+    }
+  }
+
+  Stream<List<UserData>> streamUserDataList(List userIDs) {
+    try {
+      return _userCollection.where(FieldPath.documentId, whereIn: userIDs)
+          .snapshots()
+          .map((qSnap) {
+            return qSnap.documents.map(_createUserDataFromSnapshot).toList();
+          });
+    } catch(e) {
+      print(e.toString());
+    }
+  }
+
+
 
 // read: https://stackoverflow.com/questions/52636766/how-to-query-firestore-document-inside-streambuilder-and-update-the-listview
 
   // Stream a user by UId
-  StreamSubscription streamUserDataByUIdList(List userUids) {
+  Stream streamUserDataByUIdList(List userUids) async* {
 
-     return _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
-      List<UserData> userDataList = event.documents.map(_createUserDataFromSnapshot).toList();
+      yield _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
+        List<UserData> userDataList = event.documents.map(_createUserDataFromSnapshot).toList();
 
-      userDataList.forEach((element) {
-        print(element.firstName);
-        print(element.openness);
+        userDataList.forEach((element) {
+          print(element.firstName);
+          print(element.uid);
+          print(element.openness);
+          Stream<UserLocation> userLocation = _streamUserLocation(element.uid);
+          userLocation.listen((event) {
+            print(event.uid);
+            print(event.geoPoint.toString());
+          });
+        });
       });
-    });
+
 
 //    StreamTransformer streamTransformer = new StreamTransformer.fromHandlers(handleData: handleData);
 //
@@ -241,6 +277,17 @@ class DatabaseService {
   Stream<UserLocation> streamThisUserLocation() {
     try {
       return _locationCollection.document(this.uid).snapshots()
+          .map(_createUserLocationFromSnapshot);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Stream the users name and status
+  Stream<UserLocation> _streamUserLocation(String userUId) {
+    try {
+      return _locationCollection.document(userUId).snapshots()
           .map(_createUserLocationFromSnapshot);
     } catch(e) {
       print(e.toString());

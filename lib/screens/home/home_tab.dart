@@ -33,19 +33,25 @@ class _HomeTabState extends State<HomeTab> {
     final user = Provider.of<User>(context);
     _databaseService = DatabaseService(uid: user.uid);
 
-    return StreamBuilder<List<UserData>>(
-        stream: DatabaseService(uid: user.uid).streamFriends(),
+    return StreamBuilder(
+        stream: DatabaseService(uid: user.uid).streamFriendsData(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+          }
           print("RuntimeType: " + snapshot.runtimeType.toString());
+          print("Test: " + snapshot.hasError.toString());
           if (snapshot.hasData) {
 //            UserFriends userFriends = snapshot.data;
-            List<UserData> userDataList = snapshot.data;
+            var userData = snapshot.data;
+//            List<UserData> userDataList = snapshot.data;
 
-            userDataList.forEach((element) {
-              print(element.firstName);
-              print(element.openness);
-              print(" ");
-            });
+//            userDataList.forEach((element) {
+//              print(element.firstName);
+//              print(element.openness);
+//              print(" ");
+//            });
+            print(userData[0].firstName);
 
             return Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
