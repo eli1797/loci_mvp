@@ -135,6 +135,27 @@ class DatabaseService {
     }
   }
 
+  Stream<UserFriends> streamThisUserFriends() {
+    print("hi");
+    return _friendCollection.document(this.uid).snapshots()
+        .map(_createFriendsUIdListFromSnapshot);
+  }
+
+  // Helper that creates a UserFriends object from DocumentSnapshot
+  UserFriends _createFriendsUIdListFromSnapshot(DocumentSnapshot documentSnapshot) {
+    try {
+      print("Hi" + documentSnapshot.data.toString());
+      return UserFriends(
+          uid: documentSnapshot.documentID,
+          friendUIds: documentSnapshot['closeFriendsUIdList'] ?? []
+      );
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+
   Map<UserData, UserLocation> streamFriends() {
     List friendUIdList = [];
 

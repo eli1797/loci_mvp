@@ -39,8 +39,9 @@ class UserLocation {
 class UserFriends {
 
   final String uid;
-  List<String> friendUIds;
+  List friendUIds;
 
   UserFriends({ this.uid, this.friendUIds});
+
 }
 
