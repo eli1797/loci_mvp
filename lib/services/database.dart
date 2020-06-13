@@ -136,7 +136,6 @@ class DatabaseService {
   }
 
   Stream<UserFriends> streamThisUserFriends() {
-    print("hi");
     return _friendCollection.document(this.uid).snapshots()
         .map(_createFriendsUIdListFromSnapshot);
   }
@@ -144,7 +143,6 @@ class DatabaseService {
   // Helper that creates a UserFriends object from DocumentSnapshot
   UserFriends _createFriendsUIdListFromSnapshot(DocumentSnapshot documentSnapshot) {
     try {
-      print("Hi" + documentSnapshot.data.toString());
       return UserFriends(
           uid: documentSnapshot.documentID,
           friendUIds: documentSnapshot['closeFriendsUIdList'] ?? []
@@ -154,18 +152,59 @@ class DatabaseService {
       return null;
     }
   }
+  
+  Stream<List<UserData>> streamFriends() {
+    print("A");
+    streamThisUserFriends().listen((event) {
+      print("B");
+      return streamUserDataByUIdList(event.friendUIds);
+    });
 
-
-  Map<UserData, UserLocation> streamFriends() {
-    List friendUIdList = [];
-
-    print(friendUIdList);
   }
 
   // Stream a user by UId
-  Stream<UserData> _streamUserDataByUId(String userUid) {
+  Stream<List<UserData>> streamUserDataByUIdList(List userUids) {
+    print("C");
+    print(userUids);
+    _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
+      List<UserData> userDataList = event.documents.map(_createUserDataFromSnapshot).toList();
+      print(userDataList.runtimeType);
+      userDataList.forEach((element) {
+        print(element.firstName);
+        print(element.openness);
+      });
+    });
+
+    _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
+      return event.documents.map(_createUserDataFromSnapshot).toList();
+    });
+
 
   }
+
+  // Helper that creates a UserFriends object from DocumentSnapshot
+  List<UserData> _createUserDataListFromQuerySnapshot(QuerySnapshot querySnapshot) {
+    print("hi");
+    List toReturn = [];
+    List docs = querySnapshot.documents;
+
+    for (var docSnap in docs) {
+      try {
+         UserData newUserData = UserData(
+            uid: docSnap.documentID,
+            firstName: docSnap['firstName'] ?? "unnamed_member",
+            status: docSnap['status'] ?? null,
+            openness: (docSnap['openness'] ?? 0.0).toDouble()
+        );
+         toReturn.add(newUserData);
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+    print(toReturn);
+    return toReturn;
+  }
+
 
   ///   Location Collection   ///
 

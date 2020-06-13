@@ -33,11 +33,18 @@ class _HomeTabState extends State<HomeTab> {
     final user = Provider.of<User>(context);
     _databaseService = DatabaseService(uid: user.uid);
 
-    return StreamBuilder<UserFriends>(
-        stream: DatabaseService(uid: user.uid).streamThisUserFriends(),
+    return StreamBuilder<List<UserData>>(
+        stream: DatabaseService(uid: user.uid).streamFriends(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            UserFriends userFriends = snapshot.data;
+//            UserFriends userFriends = snapshot.data;
+            List<UserData> userDataList = snapshot.data;
+
+            userDataList.forEach((element) {
+              print(element.firstName);
+              print(element.openness);
+              print(" ");
+            });
 
             return Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -85,10 +92,8 @@ class _HomeTabState extends State<HomeTab> {
                     child: Text('Query My Friends'),
                     onPressed: () async {
                       print("Pressed");
-                      await _databaseService.streamFriends();
                     },
                   ),
-                  Text(userFriends.friendUIds.toString()),
                 ],
               ),
             );
