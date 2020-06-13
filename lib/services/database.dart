@@ -154,33 +154,44 @@ class DatabaseService {
   }
   
   Stream<List<UserData>> streamFriends() {
+
     print("A");
     streamThisUserFriends().listen((event) {
       print("B");
-      return streamUserDataByUIdList(event.friendUIds);
+      var result = streamUserDataByUIdList(event.friendUIds);
+      print("Result: " + result.toString());
+      return result;
     });
+
+
 
   }
 
+// read: https://stackoverflow.com/questions/52636766/how-to-query-firestore-document-inside-streambuilder-and-update-the-listview
+
   // Stream a user by UId
-  Stream<List<UserData>> streamUserDataByUIdList(List userUids) {
-    print("C");
-    print(userUids);
-    _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
+  StreamSubscription streamUserDataByUIdList(List userUids) {
+
+     return _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
       List<UserData> userDataList = event.documents.map(_createUserDataFromSnapshot).toList();
-      print(userDataList.runtimeType);
+
       userDataList.forEach((element) {
         print(element.firstName);
         print(element.openness);
       });
     });
 
-    _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
-      return event.documents.map(_createUserDataFromSnapshot).toList();
-    });
-
-
+//    StreamTransformer streamTransformer = new StreamTransformer.fromHandlers(handleData: handleData);
+//
+//    _userCollection.where(FieldPath.documentId, whereIn: userUids)
+//        .snapshots().transform(streamTransformer);
   }
+
+//  void handleData(data, EventSink sink) {
+//    sink.add(data);
+//    print("Sink: " + sink.toString());
+//    print("Data: " + data.toString());
+//  }
 
   // Helper that creates a UserFriends object from DocumentSnapshot
   List<UserData> _createUserDataListFromQuerySnapshot(QuerySnapshot querySnapshot) {

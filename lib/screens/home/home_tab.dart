@@ -36,6 +36,7 @@ class _HomeTabState extends State<HomeTab> {
     return StreamBuilder<List<UserData>>(
         stream: DatabaseService(uid: user.uid).streamFriends(),
         builder: (context, snapshot) {
+          print("RuntimeType: " + snapshot.runtimeType.toString());
           if (snapshot.hasData) {
 //            UserFriends userFriends = snapshot.data;
             List<UserData> userDataList = snapshot.data;
