@@ -178,7 +178,7 @@ class DatabaseService {
   Stream<List<UserData>> streamFriendsData() async* {
     await for (var userFriend in streamThisUserFriends()) {
       await for (var userData in streamUserDataList(userFriend.friendUIds))
-        yield userData;
+        yield userData.where((element) => element.openness != 0.0).toList();
     }
   }
 

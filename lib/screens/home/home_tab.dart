@@ -46,12 +46,11 @@ class _HomeTabState extends State<HomeTab> {
             var userData = snapshot.data;
 //            List<UserData> userDataList = snapshot.data;
 
-//            userDataList.forEach((element) {
-//              print(element.firstName);
-//              print(element.openness);
-//              print(" ");
-//            });
-            print(userData[0].firstName);
+            userData.forEach((element) {
+              print(element.firstName);
+              print(element.openness);
+              print(" ");
+            });
 
             return Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
