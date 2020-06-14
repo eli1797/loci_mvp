@@ -175,12 +175,13 @@ class DatabaseService {
     });
   }
 
-  Stream<Map<UserData, UserLocation>> streamFriendsData() async* {
+  Stream streamFriendsData() async* {
+    //@Todo: Look into StreamSink
     try {
       // get a UserFriend obj which contains list of friendUIds
-      var userFriend = await streamThisUserFriends().first;
+      var userFriend = streamThisUserFriends();
       // use the friendUIds list to fetch their user data
-      var userDataList = await streamUserDataList(userFriend.friendUIds).first;
+      var userDataList = await streamUserDataList(userFriend).first;
       // only keep the UserData which not hidden
       var result = userDataList.where((element) => element.openness != 0.0)
           .toList();
@@ -189,7 +190,7 @@ class DatabaseService {
       var userLocationList = await streamUserLocationsFromUserDataList(result).first;
       // combine the UserData and Location into a map
       Map<UserData, UserLocation> mapRes = Map.fromIterables(result, userLocationList);
-      yield mapRes;
+      yield* Stream.value(mapRes);
 
       //@Todo: read about Stream error catching
     } catch(e) {
@@ -214,9 +215,17 @@ class DatabaseService {
     }
   }
 
-  Stream<List<UserData>> streamUserDataList(List userIDs) {
+  Stream<List<UserData>> streamUserDataList(Stream<UserFriends> userFriends) async* {
+    List<String> userIDs = [];
+    userFriends.forEach((element) {
+      print("Ele" + element.toString());
+      userIDs.add(element.uid);
+    });
+
+    print(userIDs);
+
     try {
-      return _userCollection.where(FieldPath.documentId, whereIn: userIDs)
+      _userCollection.where(FieldPath.documentId, whereIn: userIDs)
           .snapshots()
           .map((qSnap) {
             return qSnap.documents.map(_createUserDataFromSnapshot).toList();
@@ -232,34 +241,24 @@ class DatabaseService {
 
   // Stream a user by UId
   Stream streamUserDataByUIdList(List userUids) async* {
+    yield _userCollection.where(FieldPath.documentId, whereIn: userUids)
+        .snapshots()
+        .listen((event) {
+      List<UserData> userDataList = event.documents.map(
+          _createUserDataFromSnapshot).toList();
 
-      yield _userCollection.where(FieldPath.documentId, whereIn: userUids).snapshots().listen((event) {
-        List<UserData> userDataList = event.documents.map(_createUserDataFromSnapshot).toList();
-
-        userDataList.forEach((element) {
-          print(element.firstName);
-          print(element.uid);
-          print(element.openness);
-          Stream<UserLocation> userLocation = _streamUserLocation(element.uid);
-          userLocation.listen((event) {
-            print(event.uid);
-            print(event.geoPoint.toString());
-          });
+      userDataList.forEach((element) {
+        print(element.firstName);
+        print(element.uid);
+        print(element.openness);
+        Stream<UserLocation> userLocation = _streamUserLocation(element.uid);
+        userLocation.listen((event) {
+          print(event.uid);
+          print(event.geoPoint.toString());
         });
       });
-
-
-//    StreamTransformer streamTransformer = new StreamTransformer.fromHandlers(handleData: handleData);
-//
-//    _userCollection.where(FieldPath.documentId, whereIn: userUids)
-//        .snapshots().transform(streamTransformer);
+    });
   }
-
-//  void handleData(data, EventSink sink) {
-//    sink.add(data);
-//    print("Sink: " + sink.toString());
-//    print("Data: " + data.toString());
-//  }
 
   // Helper that creates a UserFriends object from DocumentSnapshot
   List<UserData> _createUserDataListFromQuerySnapshot(QuerySnapshot querySnapshot) {

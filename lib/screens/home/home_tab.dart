@@ -43,8 +43,8 @@ class _HomeTabState extends State<HomeTab> {
           print("Test: " + snapshot.hasError.toString());
           if (snapshot.hasData) {
 
-            Map<UserData, UserLocation> friendMap = snapshot.data;
-            print(friendMap.entries.toList()[0].key.status);
+            var snapData = snapshot.data;
+            print(snapData);
 
             return Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
