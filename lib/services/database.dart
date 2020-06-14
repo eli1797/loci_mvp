@@ -176,20 +176,44 @@ class DatabaseService {
   }
 
   Stream<List<UserData>> streamFriendsData() async* {
-    // get a UserFriend obj which contains list of friendUIds
-    var userFriend = await streamThisUserFriends().first;
-    // use the friendUIds list to fetch their user data
-    var userDataList = await streamUserDataList(userFriend.friendUIds).first;
-    // only keep the UserData which not hidden
-    var result = userDataList.where((element) => element.openness != 0.0).toList();
+    try {
+      // get a UserFriend obj which contains list of friendUIds
+      var userFriend = await streamThisUserFriends().first;
+      // use the friendUIds list to fetch their user data
+      var userDataList = await streamUserDataList(userFriend.friendUIds).first;
+      // only keep the UserData which not hidden
+      var result = userDataList.where((element) => element.openness != 0.0)
+          .toList();
 
-    // stream the location of these users
+      // stream the location of these users
+      var userLocationList = await streamUserLocationsFromUserDataList(result).first;
+      print(userLocationList[0].geoPoint);
+      // combine the UserData and Location into a map
+      Map<UserData, UserLocation> mapRes = Map();
 
-    // combine the UserData and Location into a map
-    yield result;
+      yield result;
 
+      //@Todo: read about Stream error catching
+    } catch(e) {
+      print(e.toString());
+    }
+  }
 
+  Stream<List<UserLocation>> streamUserLocationsFromUserDataList(List<UserData> userDataList) {
+    List<String> userIDs = [];
+    userDataList.forEach((element) {
+      userIDs.add(element.uid);
+    });
 
+    try {
+      return _locationCollection.where(FieldPath.documentId, whereIn: userIDs)
+          .snapshots()
+          .map((qSnap) {
+        return qSnap.documents.map(_createUserLocationFromSnapshot).toList();
+      });
+    } catch(e) {
+      print(e.toString());
+    }
   }
 
   Stream<List<UserData>> streamUserDataList(List userIDs) {
