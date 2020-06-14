@@ -189,9 +189,6 @@ class DatabaseService {
       var userLocationList = await streamUserLocationsFromUserDataList(result).first;
       // combine the UserData and Location into a map
       Map<UserData, UserLocation> mapRes = Map.fromIterables(result, userLocationList);
-
-      print(mapRes);
-
       yield mapRes;
 
       //@Todo: read about Stream error catching
