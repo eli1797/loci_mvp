@@ -42,15 +42,9 @@ class _HomeTabState extends State<HomeTab> {
           print("RuntimeType: " + snapshot.runtimeType.toString());
           print("Test: " + snapshot.hasError.toString());
           if (snapshot.hasData) {
-//            UserFriends userFriends = snapshot.data;
-            var userData = snapshot.data;
-//            List<UserData> userDataList = snapshot.data;
-            print(userData.length);
-            userData.forEach((element) {
-              print(element.firstName);
-              print(element.openness);
-              print(" ");
-            });
+
+            Map<UserData, UserLocation> friendMap = snapshot.data;
+            print(friendMap.values);
 
             return Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),

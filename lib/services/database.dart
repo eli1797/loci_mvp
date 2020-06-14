@@ -175,7 +175,7 @@ class DatabaseService {
     });
   }
 
-  Stream<List<UserData>> streamFriendsData() async* {
+  Stream<Map<UserData, UserLocation>> streamFriendsData() async* {
     try {
       // get a UserFriend obj which contains list of friendUIds
       var userFriend = await streamThisUserFriends().first;
@@ -187,11 +187,12 @@ class DatabaseService {
 
       // stream the location of these users
       var userLocationList = await streamUserLocationsFromUserDataList(result).first;
-      print(userLocationList[0].geoPoint);
       // combine the UserData and Location into a map
-      Map<UserData, UserLocation> mapRes = Map();
+      Map<UserData, UserLocation> mapRes = Map.fromIterables(result, userLocationList);
 
-      yield result;
+      print(mapRes);
+
+      yield mapRes;
 
       //@Todo: read about Stream error catching
     } catch(e) {
