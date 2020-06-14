@@ -176,10 +176,20 @@ class DatabaseService {
   }
 
   Stream<List<UserData>> streamFriendsData() async* {
-    await for (var userFriend in streamThisUserFriends()) {
-      await for (var userData in streamUserDataList(userFriend.friendUIds))
-        yield userData.where((element) => element.openness != 0.0).toList();
-    }
+    // get a UserFriend obj which contains list of friendUIds
+    var userFriend = await streamThisUserFriends().first;
+    // use the friendUIds list to fetch their user data
+    var userDataList = await streamUserDataList(userFriend.friendUIds).first;
+    // only keep the UserData which not hidden
+    var result = userDataList.where((element) => element.openness != 0.0).toList();
+
+    // stream the location of these users
+
+    // combine the UserData and Location into a map
+    yield result;
+
+
+
   }
 
   Stream<List<UserData>> streamUserDataList(List userIDs) {

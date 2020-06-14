@@ -45,7 +45,7 @@ class _HomeTabState extends State<HomeTab> {
 //            UserFriends userFriends = snapshot.data;
             var userData = snapshot.data;
 //            List<UserData> userDataList = snapshot.data;
-
+            print(userData.length);
             userData.forEach((element) {
               print(element.firstName);
               print(element.openness);
