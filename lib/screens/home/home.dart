@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
           _locationSub.resume();
         }
 
-        _locationSub = _locationService.positionStream().listen((Position position) {
+        _locationSub = _locationService.positionStream(distanceFilter: 2).listen((Position position) {
             print("Location changed");
 //              _databaseService.updateLocationWithGeo(position);
             _databaseService.goOpen(

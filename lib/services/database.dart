@@ -171,24 +171,23 @@ class DatabaseService {
   // Stream other opens nearby
   Stream<List<OpenUser>> streamOpenUsers() {
     try {
-      List<OpenUser> openUsers = [];
+
       return _openCollection.snapshots().map((qSnap) {
+        List<OpenUser> openUsers = new List();
         qSnap.documents.forEach((element) {
-          // don't include yourself
-          if (element.documentID != this.uid) {
-            // create OpenUsers from the streamed data
-            OpenUser newOpenUser = OpenUser(
-                uid: element.documentID,
-                firstName: element.data['firstName'],
-                status: element.data['status'],
-                altitude: element.data['altitude'],
-                geoHash: element.data['geoHash'],
-                geoPoint: element.data['geoPoint'],
-                lastUpdated: element.data['lastUpdated']
-            );
-            openUsers.add(newOpenUser);
-          }
+          // create OpenUsers from the streamed data
+          OpenUser newOpenUser = OpenUser(
+              uid: element.documentID,
+              firstName: element.data['firstName'],
+              status: element.data['status'],
+              altitude: element.data['altitude'],
+              geoHash: element.data['geoHash'],
+              geoPoint: element.data['geoPoint'],
+              lastUpdated: element.data['lastUpdated']
+          );
+          openUsers.add(newOpenUser);
         });
+        print("Open users" + openUsers.toString());
         return openUsers;
       });
     } catch(e) {

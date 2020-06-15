@@ -37,12 +37,19 @@ class _MapTabState extends State<MapTab> {
   @override
   void initState() {
     super.initState();
+    _databaseService = DatabaseService();
+    _openSub = _databaseService.streamOpenUsers().listen((event) {
+      print(event.runtimeType);
+      _drawOpenUsers(event);
+    });
   }
 
   @override
   void dispose(){
-    if (_openSub != null) {
+    try {
       _openSub.cancel();
+    } catch(e) {
+      print(e.toString());
     }
     super.dispose();
   }
@@ -62,20 +69,22 @@ class _MapTabState extends State<MapTab> {
       Map<MarkerId, Marker> updateMarkers = <MarkerId, Marker>{};
 
       openUserList.forEach((user) {
+        print(user.firstName);
 
         final MarkerId markerId = MarkerId(user.uid);
 
         final Marker newMarker = Marker(
           markerId: markerId,
           position: LatLng(user.geoPoint.latitude, user.geoPoint.longitude),
+          icon: BitmapDescriptor.defaultMarkerWithHue(210.0)
         );
 
         updateMarkers[markerId] = newMarker;
       });
 
-//      setState(() {
-//        markers = updateMarkers;
-//      });
+      setState(() {
+        markers = updateMarkers;
+      });
 
     } catch(e) {
       print(e.toString());
@@ -86,18 +95,13 @@ class _MapTabState extends State<MapTab> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    _databaseService = DatabaseService(uid: user.uid);
+
 
     final userLocation = Provider.of<UserLocation>(context);
     final userData = Provider.of<UserData>(context);
 
     if (userLocation != null || userData != null) {
       _setupCamera(userLocation);
-
-      _openSub = _databaseService.streamOpenUsers().listen((event) {
-        print(event.runtimeType);
-        _drawOpenUsers(event);
-      });
 
       if (userData.openness == 2.0) {
         if (_openSub != null && _openSub.isPaused) {
@@ -128,6 +132,8 @@ class _MapTabState extends State<MapTab> {
             });
           },
           scrollGesturesEnabled: true,
+          mapToolbarEnabled: false,
+          markers: Set<Marker>.of(markers.values),
         ),
       );
     } else {
