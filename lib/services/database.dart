@@ -11,6 +11,7 @@ class DatabaseService {
   final CollectionReference _userCollection = Firestore.instance.collection('users');
   final CollectionReference _friendCollection = Firestore.instance.collection('friends');
   final CollectionReference _locationCollection = Firestore.instance.collection('locations');
+  final CollectionReference _openCollection = Firestore.instance.collection('open');
 
   //GeoFlutterFire
   Geoflutterfire geo = Geoflutterfire();
@@ -117,6 +118,43 @@ class DatabaseService {
       return null;
     }
   }
+
+  /// Open Collection ///
+
+  // Write
+
+  // Go open
+  Future updateOpen ({String firstName, String status = '', Position position}) async {
+    try {
+      GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
+      return await _openCollection.document(this.uid).setData({
+        'firstName': firstName,
+        'status': status,
+        'geoPoint': gfp.geoPoint,
+        'geoHash': gfp.hash,
+        'altitude': position.altitude,
+        'lastUpdated': Timestamp.now()
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Go hidden
+  Future goHidden() async {
+    try {
+      return await _openCollection.document(this.uid).delete();
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // Stream
+
+  
+
 
   ///   Friends Collection   ///
 
