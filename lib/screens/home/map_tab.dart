@@ -31,6 +31,7 @@ class _MapTabState extends State<MapTab> {
   CameraTargetBounds _cameraTargetBounds;
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<MarkerId, OpenUser> markerData = <MarkerId, OpenUser>{};
 
   StreamSubscription _openSub;
 
@@ -67,6 +68,7 @@ class _MapTabState extends State<MapTab> {
       print("Drawing");
 
       Map<MarkerId, Marker> updateMarkers = <MarkerId, Marker>{};
+      Map<MarkerId, OpenUser> updateMarkerData = <MarkerId, OpenUser>{};
 
       openUserList.forEach((user) {
         print(user.firstName);
@@ -76,16 +78,30 @@ class _MapTabState extends State<MapTab> {
         final Marker newMarker = Marker(
           markerId: markerId,
           position: LatLng(user.geoPoint.latitude, user.geoPoint.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(210.0)
+          icon: BitmapDescriptor.defaultMarkerWithHue(210.0),
+          onTap: () {
+            _onMarkerTapped(markerId);
+          },
         );
 
+        updateMarkerData[markerId] = user;
         updateMarkers[markerId] = newMarker;
       });
 
       setState(() {
         markers = updateMarkers;
+        markerData = updateMarkerData;
       });
 
+    } catch(e) {
+      print(e.toString());
+    }
+  }
+
+  void _onMarkerTapped(MarkerId markerId) {
+    print("Marker Tapped");
+    try {
+      print(markerData[markerId].status);
     } catch(e) {
       print(e.toString());
     }
