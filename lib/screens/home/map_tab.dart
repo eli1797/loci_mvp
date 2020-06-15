@@ -47,46 +47,36 @@ class _MapTabState extends State<MapTab> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    final userLoc = Provider.of<UserLocation>(context);
-    if (userLoc != null) {
-      print(userLoc.geoPoint);
+    final userLocation = Provider.of<UserLocation>(context);
+
+    if (userLocation != null) {
+      _setupCamera(userLocation);
+
+      return Container(
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        child: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _startPos,
+          //cameraTargetBounds: _cameraTargetBounds,
+          myLocationEnabled: true,
+          onMapCreated: (GoogleMapController controller) {
+            setState(() {
+              _mapsController = controller;
+            });
+          },
+          scrollGesturesEnabled: true,
+        ),
+      );
+    } else {
+      return Loading();
     }
-
-
-      return StreamBuilder<UserLocation>(
-        stream: DatabaseService(uid: user.uid).streamThisUserLocation(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            UserLocation userLocation = snapshot.data;
-
-            _setupCamera(userLocation);
-
-            return Container(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height,
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _startPos,
-                //cameraTargetBounds: _cameraTargetBounds,
-                myLocationEnabled: true,
-                onMapCreated: (GoogleMapController controller) {
-                  setState(() {
-                    _mapsController = controller;
-                  });
-                },
-                scrollGesturesEnabled: true,
-              ),
-            );
-          } else {
-            return Loading();
-          }
-        });
   }
 
   CameraPosition _createCameraPositionFromGP(GeoPoint gp) {
@@ -126,3 +116,4 @@ class _MapTabState extends State<MapTab> {
     return degrees(rad);
   }
 }
+
