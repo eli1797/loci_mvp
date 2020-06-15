@@ -73,6 +73,9 @@ class _MapTabState extends State<MapTab> {
       openUserList.forEach((user) {
         print(user.firstName);
 
+        //Read: https://infinum.com/the-capsized-eight/creating-custom-markers-on-google-maps-in-flutter-apps
+        //@Todo: Make custom markers with ^ and on tapped bring up a sheet from the bottom with pic, name, status, etc
+
         final MarkerId markerId = MarkerId(user.uid);
 
         final Marker newMarker = Marker(
