@@ -30,11 +30,21 @@ class _MapTabState extends State<MapTab> {
   CameraPosition _startPos;
   CameraTargetBounds _cameraTargetBounds;
 
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+
   StreamSubscription _openSub;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    if (_openSub != null) {
+      _openSub.cancel();
+    }
+    super.dispose();
   }
 
   void _setupCamera(UserLocation userLocation) {
@@ -45,8 +55,31 @@ class _MapTabState extends State<MapTab> {
     //_cameraTargetBounds = _createMapBoundsFromGeoPoint(userData.gp, 50);
   }
 
-  void _drawOpenUsers() {
-    print("Drawing");
+  void _drawOpenUsers(List<OpenUser> openUserList) {
+    try {
+      print("Drawing");
+
+      Map<MarkerId, Marker> updateMarkers = <MarkerId, Marker>{};
+
+      openUserList.forEach((user) {
+
+        final MarkerId markerId = MarkerId(user.uid);
+
+        final Marker newMarker = Marker(
+          markerId: markerId,
+          position: LatLng(user.geoPoint.latitude, user.geoPoint.longitude),
+        );
+
+        updateMarkers[markerId] = newMarker;
+      });
+
+//      setState(() {
+//        markers = updateMarkers;
+//      });
+
+    } catch(e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -61,13 +94,20 @@ class _MapTabState extends State<MapTab> {
     if (userLocation != null || userData != null) {
       _setupCamera(userLocation);
 
-      if (_openSub != null) {
-
-      }
-
       _openSub = _databaseService.streamOpenUsers().listen((event) {
-        _drawOpenUsers();
+        print(event.runtimeType);
+        _drawOpenUsers(event);
       });
+
+      if (userData.openness == 2.0) {
+        if (_openSub != null && _openSub.isPaused) {
+          _openSub.resume();
+        }
+      } else {
+        if (_openSub != null) {
+          _openSub.pause();
+        }
+      }
 
       return Container(
         height: MediaQuery
@@ -81,7 +121,6 @@ class _MapTabState extends State<MapTab> {
         child: GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition: _startPos,
-          //cameraTargetBounds: _cameraTargetBounds,
           myLocationEnabled: true,
           onMapCreated: (GoogleMapController controller) {
             setState(() {

@@ -46,5 +46,14 @@ class UserFriends {
 
 class OpenUser {
 
+  final String uid;
+  final String firstName;
+  final String status;
+  final double altitude;
+  final String geoHash;
+  final GeoPoint geoPoint;
+  final Timestamp lastUpdated;
+
+  OpenUser({ this.uid, this.firstName, this.status, this.altitude, this.geoHash, this.geoPoint, this.lastUpdated });
 }
 

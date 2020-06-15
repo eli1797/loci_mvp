@@ -42,6 +42,9 @@ class _HomeState extends State<Home> {
   @override
   void dispose(){
     _locationSub.cancel();
+    if (_locationSub != null) {
+      _locationSub.cancel();
+    }
     super.dispose();
   }
 
