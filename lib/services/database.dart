@@ -151,7 +151,15 @@ class DatabaseService {
     }
   }
 
-  // Stream
+  // Stream other opens nearby
+  Stream streamOpenUsers() {
+    try {
+      return _openCollection.snapshots();
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
 
 

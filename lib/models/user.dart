@@ -42,6 +42,9 @@ class UserFriends {
   List friendUIds;
 
   UserFriends({ this.uid, this.friendUIds});
+}
+
+class OpenUser {
 
 }
 
