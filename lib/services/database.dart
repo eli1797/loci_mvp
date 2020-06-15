@@ -124,12 +124,29 @@ class DatabaseService {
   // Write
 
   // Go open
-  Future updateOpen ({String firstName, String status = '', Position position}) async {
+  Future goOpen ({String firstName, String status = '', Position position}) async {
     try {
       GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
       return await _openCollection.document(this.uid).setData({
         'firstName': firstName,
         'status': status,
+        'geoPoint': gfp.geoPoint,
+        'geoHash': gfp.hash,
+        'altitude': position.altitude,
+        'lastUpdated': Timestamp.now()
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // while open update position
+  // called by a subscription to onChange of location service
+  Future updateOpenPosition(Position position) async {
+    try {
+      GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
+      return await _openCollection.document(this.uid).setData({
         'geoPoint': gfp.geoPoint,
         'geoHash': gfp.hash,
         'altitude': position.altitude,

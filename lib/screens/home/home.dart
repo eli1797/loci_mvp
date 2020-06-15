@@ -33,10 +33,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _locationService.checkPermission();
-    _locationSub = _locationService.positionStream().listen((Position position) {
-      print("Location changed");
-      _databaseService.updateLocationWithGeo(position);
-    });
+//    _locationSub = _locationService.positionStream().listen((Position position) {
+//      print("Location changed");
+//      _databaseService.updateLocationWithGeo(position);
+//    });
   }
 
   @override
@@ -59,6 +59,27 @@ class _HomeState extends State<Home> {
     final userData = Provider.of<UserData>(context);
 
     if (userData != null) {
+
+      if (userData.openness == 2.0) {
+        if (_locationSub != null && _locationSub.isPaused) {
+          _locationSub.resume();
+        }
+
+        _locationSub = _locationService.positionStream().listen((Position position) {
+            print("Location changed");
+//              _databaseService.updateLocationWithGeo(position);
+            _databaseService.goOpen(
+                firstName: userData.firstName,
+                status: userData.status,
+                position: position
+            );
+          });
+      } else {
+        if (_locationSub != null) {
+          _locationSub.pause();
+        }
+      }
+
       return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -93,13 +114,16 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            body: TabBarView(
+            body: StreamProvider<UserLocation> (
+              create: (_) => DatabaseService(uid: user.uid).streamThisUserLocation(),
+              child: TabBarView(
                 children: [
                   HomeTab(),
                   MapTab()
                 ]
             )
-        ),
+          ),
+        )
       );
     } else {
       return Loading();

@@ -5,6 +5,7 @@ import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/profile/settings.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/services/database.dart';
+import 'package:mvp/services/location.dart';
 import 'package:mvp/shared/constants.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +18,13 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
+  DatabaseService _databaseService;
+  final LocationService _locationService = LocationService();
+
   // first name text editing
   final _formKey = GlobalKey<FormState>();
 
+  // openness state
   double _sliderVal;
 
   @override
@@ -29,8 +34,9 @@ class _ProfileState extends State<Profile> {
     if (user == null) {
       return Authenticate();
     } else {
+      _databaseService = DatabaseService(uid: user.uid);
       return StreamBuilder<UserData>(
-          stream: DatabaseService(uid: user.uid).streamThisUserData(),
+          stream: _databaseService.streamThisUserData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
@@ -76,7 +82,7 @@ class _ProfileState extends State<Profile> {
                               ),
                               initialValue: userData.firstName,
                               onFieldSubmitted: (val) async {
-                                await DatabaseService(uid: user.uid).updateFirstName(
+                                await _databaseService.updateFirstName(
                                     val);
                               },
                             ),
@@ -87,7 +93,7 @@ class _ProfileState extends State<Profile> {
                               ),
                               initialValue: userData.status ?? '',
                               onFieldSubmitted: (val) async {
-                                await DatabaseService(uid: user.uid).updateStatus(
+                                await _databaseService.updateStatus(
                                     val);
                               },
                             ),
@@ -105,7 +111,18 @@ class _ProfileState extends State<Profile> {
                                   setState(() {
                                     _sliderVal = val;
                                   });
-                                  await DatabaseService(uid: user.uid).updateOpenness(val);
+                                  await _databaseService.updateOpenness(val);
+                                  if (val == 2.0) {
+                                    print("going open");
+                                    await _databaseService.goOpen(
+                                      firstName: userData.firstName,
+                                      status: userData.status,
+                                      position: await _locationService.getPosition()
+                                    );
+                                  } else {
+                                    print("going hidden");
+                                    await _databaseService.goHidden();
+                                  }
                                 })
                           ],
                         ),
