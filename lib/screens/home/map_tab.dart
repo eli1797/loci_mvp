@@ -56,8 +56,9 @@ class _MapTabState extends State<MapTab> {
     _databaseService = DatabaseService(uid: user.uid);
 
     final userLocation = Provider.of<UserLocation>(context);
+    final userData = Provider.of<UserData>(context);
 
-    if (userLocation != null) {
+    if (userLocation != null || userData != null) {
       _setupCamera(userLocation);
 
       if (_openSub != null) {

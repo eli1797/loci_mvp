@@ -116,13 +116,16 @@ class _HomeState extends State<Home> {
             ),
             body: StreamProvider<UserLocation> (
               create: (_) => DatabaseService(uid: user.uid).streamThisUserLocation(),
-              child: TabBarView(
-                children: [
-                  HomeTab(),
-                  MapTab()
-                ]
+              child: StreamProvider<UserData> (
+                create: (_) => DatabaseService(uid: user.uid).streamThisUserData(),
+                child: TabBarView(
+                    children: [
+                      HomeTab(),
+                      MapTab()
+                    ]
+                  )
+              ),
             )
-          ),
         )
       );
     } else {
