@@ -25,14 +25,16 @@ class _MapTabState extends State<MapTab> {
   GoogleMapController _mapsController;
 
   final LocationService _locationService = LocationService();
+  DatabaseService _databaseService;
 
   CameraPosition _startPos;
   CameraTargetBounds _cameraTargetBounds;
 
+  StreamSubscription _openSub;
+
   @override
   void initState() {
     super.initState();
-//    _locationService.checkPermission();
   }
 
   void _setupCamera(UserLocation userLocation) {
@@ -43,14 +45,28 @@ class _MapTabState extends State<MapTab> {
     //_cameraTargetBounds = _createMapBoundsFromGeoPoint(userData.gp, 50);
   }
 
+  void _drawOpenUsers() {
+    print("Drawing");
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
+
+    _databaseService = DatabaseService(uid: user.uid);
 
     final userLocation = Provider.of<UserLocation>(context);
 
     if (userLocation != null) {
       _setupCamera(userLocation);
+
+      if (_openSub != null) {
+
+      }
+
+      _openSub = _databaseService.streamOpenUsers().listen((event) {
+        _drawOpenUsers();
+      });
 
       return Container(
         height: MediaQuery

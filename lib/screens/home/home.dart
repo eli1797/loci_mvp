@@ -114,8 +114,11 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            body: StreamProvider<UserLocation> (
-              create: (_) => DatabaseService(uid: user.uid).streamThisUserLocation(),
+            body: MultiProvider (
+              providers:[
+                Provider<Stream<UserLocation>>(create: (_) => _databaseService.streamThisUserLocation()),
+                Provider<Stream<UserData>>(create: (_) => _databaseService.streamThisUserData()),
+              ],
               child: TabBarView(
                 children: [
                   HomeTab(),
