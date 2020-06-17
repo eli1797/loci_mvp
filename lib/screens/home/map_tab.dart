@@ -115,7 +115,10 @@ class _MapTabState extends State<MapTab> {
                 child: Text(openUser.firstName),
               ),
               SizedBox(height: 20.0),
-              Text(openUser.firstName),
+              Text(
+                openUser.firstName,
+                style: TextStyle(fontSize: 22.0),
+              ),
               SizedBox(height: 20.0),
               Text(openUser.status),
             ]
