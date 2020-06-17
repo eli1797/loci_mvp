@@ -124,6 +124,17 @@ class _MapTabState extends State<MapTab> {
       });
     } catch(e) {
       print(e.toString());
+      showModalBottomSheet(context: context, builder: (context) {
+        return Container(
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 20.0),
+                Text("Whoops! Failed to get this person")
+              ]
+            )
+        );
+      });
     }
   }
 
