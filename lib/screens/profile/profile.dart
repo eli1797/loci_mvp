@@ -48,6 +48,14 @@ class _ProfileState extends State<Profile> {
                   appBar: AppBar(
                     title: Text("Profile"),
                     actions: <Widget>[
+                      Container(
+                        height: 15.0,
+                        width: 15.0,
+                        decoration: BoxDecoration(
+                          color: Constants.sliderColor[userData.openness ?? 0.0],
+                          shape: BoxShape.circle,
+                        ),
+                      ),
                       IconButton(
                           icon: Icon(
                             Icons.settings,
@@ -107,7 +115,8 @@ class _ProfileState extends State<Profile> {
                                 label: Constants.sliderLabel[_sliderVal],
                                 activeColor: Constants.sliderColor[_sliderVal],
                                 inactiveColor: Constants.sliderColor[_sliderVal],
-                                onChanged: (val) async {
+                                onChanged: (val) => print(val),
+                                onChangeEnd: (val) async {
                                   setState(() {
                                     _sliderVal = val;
                                   });
