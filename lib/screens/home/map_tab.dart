@@ -1,16 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/services/database.dart';
 import 'package:mvp/services/location.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 import 'package:vector_math/vector_math.dart';
 
 class MapTab extends StatefulWidget {
@@ -104,7 +102,26 @@ class _MapTabState extends State<MapTab> {
   void _onMarkerTapped(MarkerId markerId) {
     print("Marker Tapped");
     try {
-      print(markerData[markerId].status);
+      OpenUser openUser = markerData[markerId];
+      showModalBottomSheet(context: context, builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+          child: Column(
+              children: <Widget>[
+              SizedBox(height: 20.0),
+              CircleAvatar(
+//                backgroundColor: Colors.blue,
+                radius: 50.0,
+                child: Text(openUser.firstName),
+              ),
+              SizedBox(height: 20.0),
+              Text(openUser.firstName),
+              SizedBox(height: 20.0),
+              Text(openUser.status),
+            ]
+          )
+        );
+      });
     } catch(e) {
       print(e.toString());
     }
