@@ -18,13 +18,16 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
+  /// Instance of service for Cloud Firestore interaction
   DatabaseService _databaseService;
+
+  /// Instance of service for getting or streaming location
   final LocationService _locationService = LocationService();
 
-  // first name text editing
+  /// Key for firstName and Status text editing
   final _formKey = GlobalKey<FormState>();
 
-  // openness state
+  /// State holder for openness slider
   double _sliderVal;
 
   @override
@@ -34,15 +37,18 @@ class _ProfileState extends State<Profile> {
     if (user == null) {
       return Authenticate();
     } else {
+      // setup the instance of the database service
       _databaseService = DatabaseService(uid: user.uid);
+
+      // stream the UserData
       return StreamBuilder<UserData>(
           stream: _databaseService.streamThisUserData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              // create UserData model from Stream
               UserData userData = snapshot.data;
-
+              // set _sliderVal starting value based on what's in the cloud
               _sliderVal = userData.openness ?? 0.0;
-
               return Scaffold(
                   resizeToAvoidBottomInset: false,
                   appBar: AppBar(
@@ -65,7 +71,8 @@ class _ProfileState extends State<Profile> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Settings())
+                                    builder: (context) => Settings()
+                                )
                             );
                           })
                     ],
