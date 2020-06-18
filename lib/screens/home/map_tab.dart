@@ -38,7 +38,6 @@ class _MapTabState extends State<MapTab> {
     super.initState();
     _databaseService = DatabaseService();
     _openSub = _databaseService.streamOpenUsers().listen((event) {
-      print(event.runtimeType);
       _drawOpenUsers(event);
     });
   }
