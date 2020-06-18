@@ -7,26 +7,24 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 
 class DatabaseService {
 
-  // collection references
+  /// Firestore collection references
   final CollectionReference _userCollection = Firestore.instance.collection('users');
   final CollectionReference _friendCollection = Firestore.instance.collection('friends');
   final CollectionReference _locationCollection = Firestore.instance.collection('locations');
   final CollectionReference _openCollection = Firestore.instance.collection('open');
 
-  //GeoFlutterFire
+  /// GeoFlutterFire instance
   Geoflutterfire geo = Geoflutterfire();
 
-  // id unique to user
+  /// id unique to user, created by Firebase Auth and associated with User Model
   final String uid;
 
-  // constructor
+  /// Constructor
   DatabaseService({ this.uid });
 
   ///   User Collection   ///
 
-  // Write
-
-  // Write to update user collection
+  /// Write to add/update this User's doc in the user collection
   Future updateThisUserDocument ({String firstName, String status = '', double openness = 0.0}) async {
     try {
       return await _userCollection.document(this.uid).setData({
@@ -41,9 +39,8 @@ class DatabaseService {
     }
   }
 
-  // Update a user's firstName
+  /// Update this user's firstName
   Future updateFirstName(String firstName) async {
-    //@Todo: validation here? Probably some in the ui elements that call this
     try {
       return await _userCollection.document(this.uid).setData({
         'firstName': firstName
@@ -54,9 +51,8 @@ class DatabaseService {
     }
   }
 
-  // Update a user's status
+  /// Update this user's status
   Future updateStatus(String status) async {
-    //@Todo: validation here? Probably in the UI elements that make this call
     try {
       return await _userCollection.document(this.uid).setData({
         'status': status,
@@ -68,9 +64,8 @@ class DatabaseService {
     }
   }
 
-  // Update a user's status
+  /// Update this user's openness
   Future updateOpenness(double openness) async {
-    //@Todo: validation here? Probably in the UI elements that make this call
     try {
       return await _userCollection.document(this.uid).setData({
         'openness': openness,
@@ -81,7 +76,7 @@ class DatabaseService {
     }
   }
 
-  // Stream the users name and status
+  /// Stream this users UserData
   Stream<UserData> streamThisUserData() {
     try {
       return _userCollection.document(this.uid).snapshots()
@@ -92,7 +87,7 @@ class DatabaseService {
     }
   }
 
-  // Stream the users name and status
+  /// Stream UserData by uid
   Stream<UserData> streamUserDataByUId(String userUId) {
     try {
       return _userCollection.document(userUId).snapshots()
@@ -103,8 +98,7 @@ class DatabaseService {
     }
   }
 
-  // Helper
-  // userData object from DocumentSnapshot
+  /// Helper creates UserData object from DocumentSnapshot
   UserData _createUserDataFromSnapshot(DocumentSnapshot documentSnapshot) {
     try {
       return UserData(
@@ -121,9 +115,9 @@ class DatabaseService {
 
   /// Open Collection ///
 
-  // Write
-
-  // Go open
+  /// Go open
+  ///
+  /// Writes firstName, status, and location info to an open collection doc
   Future goOpen ({String firstName, String status = '', Position position}) async {
     try {
       GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
@@ -141,24 +135,9 @@ class DatabaseService {
     }
   }
 
-  // while open update position
-  // called by a subscription to onChange of location service
-  Future updateOpenPosition(Position position) async {
-    try {
-      GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
-      return await _openCollection.document(this.uid).setData({
-        'geoPoint': gfp.geoPoint,
-        'geoHash': gfp.hash,
-        'altitude': position.altitude,
-        'lastUpdated': Timestamp.now()
-      }, merge: true);
-    } catch(e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
-  // Go hidden
+  /// Go hidden
+  ///
+  /// Removes this users document from the open collection
   Future goHidden() async {
     try {
       return await _openCollection.document(this.uid).delete();
@@ -168,7 +147,9 @@ class DatabaseService {
     }
   }
 
-  // Stream other opens nearby
+  /// Stream all OpenUsers in the open collection
+  ///
+  /// Returns a Stream of a List of OpenUsers (including oneself if open)
   Stream<List<OpenUser>> streamOpenUsers() {
     try {
 
@@ -197,13 +178,9 @@ class DatabaseService {
   }
 
 
-
-
   ///   Friends Collection   ///
 
-  // Write
-
-  // Add a friend
+  /// Add a friend
   Future addFriendByUID (String friendUId) async {
     try {
       return await _friendCollection.document(this.uid).setData({
@@ -215,7 +192,7 @@ class DatabaseService {
     }
   }
 
-  // Remove a friend
+  /// Remove a friend from this user by their uid
   Future _removeFriendByUID (String friendUId) async {
     try {
       return await _friendCollection.document(this.uid).setData({
@@ -227,12 +204,13 @@ class DatabaseService {
     }
   }
 
+  /// Stream this Users Friends
   Stream<UserFriends> streamThisUserFriends() {
     return _friendCollection.document(this.uid).snapshots()
         .map(_createFriendsUIdListFromSnapshot);
   }
 
-  // Helper that creates a UserFriends object from DocumentSnapshot
+  /// Helper that creates a UserFriends object from DocumentSnapshot
   UserFriends _createFriendsUIdListFromSnapshot(DocumentSnapshot documentSnapshot) {
     try {
       return UserFriends(
@@ -244,132 +222,13 @@ class DatabaseService {
       return null;
     }
   }
-  
-  Stream<List<UserData>> streamFriends() {
-
-    print("A");
-    streamThisUserFriends().listen((event) {
-      print("B");
-      var result = streamUserDataByUIdList(event.friendUIds);
-      print("Result: " + result.toString());
-      return result;
-    });
-  }
-
-  Stream streamFriendsData() async* {
-    //@Todo: Look into StreamSink
-    try {
-      // get a UserFriend obj which contains list of friendUIds
-      var userFriend = streamThisUserFriends();
-      // use the friendUIds list to fetch their user data
-      var userDataList = await streamUserDataList(userFriend).first;
-      // only keep the UserData which not hidden
-      var result = userDataList.where((element) => element.openness != 0.0)
-          .toList();
-
-      // stream the location of these users
-      var userLocationList = await streamUserLocationsFromUserDataList(result).first;
-      // combine the UserData and Location into a map
-      Map<UserData, UserLocation> mapRes = Map.fromIterables(result, userLocationList);
-      yield* Stream.value(mapRes);
-
-      //@Todo: read about Stream error catching
-    } catch(e) {
-      print(e.toString());
-    }
-  }
-
-  Stream<List<UserLocation>> streamUserLocationsFromUserDataList(List<UserData> userDataList) {
-    List<String> userIDs = [];
-    userDataList.forEach((element) {
-      userIDs.add(element.uid);
-    });
-
-    try {
-      return _locationCollection.where(FieldPath.documentId, whereIn: userIDs)
-          .snapshots()
-          .map((qSnap) {
-        return qSnap.documents.map(_createUserLocationFromSnapshot).toList();
-      });
-    } catch(e) {
-      print(e.toString());
-    }
-  }
-
-  Stream<List<UserData>> streamUserDataList(Stream<UserFriends> userFriends) async* {
-    List<String> userIDs = [];
-    userFriends.forEach((element) {
-      print("Ele" + element.toString());
-      userIDs.add(element.uid);
-    });
-
-    print(userIDs);
-
-    try {
-      _userCollection.where(FieldPath.documentId, whereIn: userIDs)
-          .snapshots()
-          .map((qSnap) {
-            return qSnap.documents.map(_createUserDataFromSnapshot).toList();
-          });
-    } catch(e) {
-      print(e.toString());
-    }
-  }
-
-
-
-  // read: https://stackoverflow.com/questions/52636766/how-to-query-firestore-document-inside-streambuilder-and-update-the-listview
-
-  // Stream a user by UId
-  Stream streamUserDataByUIdList(List userUids) async* {
-    yield _userCollection.where(FieldPath.documentId, whereIn: userUids)
-        .snapshots()
-        .listen((event) {
-      List<UserData> userDataList = event.documents.map(
-          _createUserDataFromSnapshot).toList();
-
-      userDataList.forEach((element) {
-        print(element.firstName);
-        print(element.uid);
-        print(element.openness);
-        Stream<UserLocation> userLocation = _streamUserLocation(element.uid);
-        userLocation.listen((event) {
-          print(event.uid);
-          print(event.geoPoint.toString());
-        });
-      });
-    });
-  }
-
-  // Helper that creates a UserFriends object from DocumentSnapshot
-  List<UserData> _createUserDataListFromQuerySnapshot(QuerySnapshot querySnapshot) {
-    print("hi");
-    List toReturn = [];
-    List docs = querySnapshot.documents;
-
-    for (var docSnap in docs) {
-      try {
-         UserData newUserData = UserData(
-            uid: docSnap.documentID,
-            firstName: docSnap['firstName'] ?? "unnamed_member",
-            status: docSnap['status'] ?? null,
-            openness: (docSnap['openness'] ?? 0.0).toDouble()
-        );
-         toReturn.add(newUserData);
-      } catch (e) {
-        print(e.toString());
-      }
-    }
-    print(toReturn);
-    return toReturn;
-  }
 
 
   ///   Location Collection   ///
 
   // Write
 
-  // one off update user's geohash, geopoint(lat, long), and altitude
+  /// Write to update user's geohash, geopoint(lat, long), and altitude
   Future updateLocationWithGeo (Position position) async {
     try {
       GeoFirePoint gfp = _createGeoFirePointFromPosition(position);
@@ -385,7 +244,7 @@ class DatabaseService {
     }
   }
 
-  // Stream the users name and status
+  /// Stream this Users UserLocation
   Stream<UserLocation> streamThisUserLocation() {
     try {
       return _locationCollection.document(this.uid).snapshots()
@@ -396,17 +255,7 @@ class DatabaseService {
     }
   }
 
-  // Stream the users name and status
-  Stream<UserLocation> _streamUserLocation(String userUId) {
-    try {
-      return _locationCollection.document(userUId).snapshots()
-          .map(_createUserLocationFromSnapshot);
-    } catch(e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
+  /// Helper creates UserLocation from DocumentSnapshot
   UserLocation _createUserLocationFromSnapshot(DocumentSnapshot documentSnapshot) {
     try {
       return UserLocation(
@@ -422,7 +271,7 @@ class DatabaseService {
     }
   }
 
-  // Helper
+  /// Helper creates GeoFirePoint from Position
   GeoFirePoint _createGeoFirePointFromPosition (Position position) {
     return geo.point(latitude: position.latitude, longitude: position.longitude);
   }
