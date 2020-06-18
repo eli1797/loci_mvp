@@ -15,8 +15,10 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    /// User model from Provider in main.dart
     final user = Provider.of<User>(context);
 
+    // Show different screens based on authentication status
     if (user == null) {
       return Authenticate();
     } else {

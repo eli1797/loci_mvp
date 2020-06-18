@@ -5,6 +5,7 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    /// Service to interact with Firebase Auth
     final AuthService _authService = AuthService();
 
     return Scaffold(
@@ -16,12 +17,13 @@ class Settings extends StatelessWidget {
         child: Column(
           children: <Widget>[
             RaisedButton(
-            color: Colors.blue,
-            child: Text('Log out'),
-            onPressed: () async {
-              Future result = await _authService.signOut();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
-            }),
+              color: Colors.blue,
+              child: Text('Log out'),
+              onPressed: () async {
+                Future result = await _authService.signOut();
+                Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+              }
+            ),
           ],
         ),
       ),
