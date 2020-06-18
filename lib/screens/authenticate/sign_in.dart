@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mvp/screens/authenticate/register.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/shared/loading.dart';
 
@@ -14,17 +13,24 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
 
+  /// Service providing connection to Firebase Auth
   final AuthService _authService = AuthService();
+
+  /// Key for email and password form
   final _formKey = GlobalKey<FormState>();
+
+  /// State holder for whether or not to show the loading widget
   bool _loading = false;
 
-  // text field states
+  /// text field states
   String _email = '';
   String _password = '';
-  String error = '';
+  String _error = '';
 
   @override
   Widget build(BuildContext context) {
+
+    // Show loading widget or Sign-in depending on state
     return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -43,7 +49,7 @@ class _SignInState extends State<SignIn> {
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  hintText: "Email",
+                  hintText: 'Email',
                 ),
                 validator: (val) {
                   if (val.isEmpty) {
@@ -61,7 +67,7 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: 20.0),
               TextFormField(
                 decoration: const InputDecoration(
-                  hintText: "Password",
+                  hintText: 'Password',
                 ),
                 validator: (val) {
                   if (val.isEmpty) {
@@ -84,26 +90,28 @@ class _SignInState extends State<SignIn> {
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
                     setState(() => _loading = true);
-                    //@TODO: get rid of trailing spaces in the email and password + other common practices
+
+                    // Try Sign-in, display error if it fails
                     dynamic result = await _authService.signInEmailPass(_email.trim(), _password.trim());
                     if (result == null) {
                       setState(() {
-                        error = 'Failed login. Incorrect credentials';
+                        _error = 'Failed login. Incorrect credentials';
                         _loading = false;
                       });
                     }
                   }
                 }),
               Text(
-                error,
+                _error,
                 style: TextStyle(color:  Colors.red, fontSize: 12.0),
               ),
               SizedBox(height: 5.0),
               FlatButton(
-                  child: Text('Need an account? Register'),
-                  onPressed: () {
-                    widget.toggleView();
-                  }),
+                child: Text('Need an account? Register'),
+                onPressed: () {
+                  widget.toggleView();
+                }
+              ),
             ],
           ),
         ),
