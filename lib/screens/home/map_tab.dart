@@ -114,6 +114,7 @@ class _MapTabState extends State<MapTab> {
     }
   }
 
+
   /// Create the initial camera position
   bool _setupCamera(GeoPoint geoPoint) {
     try {

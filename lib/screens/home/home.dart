@@ -32,20 +32,17 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _locationService.checkPermission();
-    updatePos();
-  }
 
-  updatePos() async {
-    Position pos = await _locationService.getPosition();
-    _databaseService.updateLocationWithGeo(pos);
+    // check permissions
+    _locationService.checkPermission();
   }
 
   @override
   void dispose(){
-    _locationSub.cancel();
-    if (_locationSub != null) {
+    try {
       _locationSub.cancel();
+    } catch(e) {
+      print(e.toString());
     }
     super.dispose();
   }
@@ -53,90 +50,110 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    //provider of the user model
+    /// Provider of the User model from main.dart
     final user = Provider.of<User>(context);
+
+    // if no user, show the authentication screen
     if (user == null) {
       return Authenticate();
     }
 
+    // set the database service instance
     _databaseService = DatabaseService(uid: user.uid);
 
+    // one off write position to location collection
+    // used for required initial camera position in map
+    _updatePos();
+
+    /// Provider of UserData model from home_wrapper.dart
     final userData = Provider.of<UserData>(context);
 
+    // if we have user data
+    if (_locationSub != null && _locationSub.isPaused) {
+      _locationSub.resume();
+    } else {
+      _locationSub = _locationService.positionStream(distanceFilter: 5)
+          .listen((Position position) {
+        print("Location changed");
+
+        // @TODO: Fewer writes here?
+        _databaseService.updateLocationWithGeo(position);
+
+        if (userData != null && userData.openness == 2.0) {
+          _databaseService.goOpen(
+              firstName: userData.firstName,
+              status: userData.status,
+              position: position
+          );
+        }
+      });
+    }
+
+    // if UserData show tabs, else show Loading widget
     if (userData != null) {
-
-      if (userData.openness == 2.0) {
-        if (_locationSub != null && _locationSub.isPaused) {
-          _locationSub.resume();
-        }
-
-        _locationSub = _locationService.positionStream(distanceFilter: 5).listen((Position position) {
-            print("Location changed");
-            // @TODO: Fewer writes here?
-            // Currently doing two writes everytime location changes
-            _databaseService.updateLocationWithGeo(position);
-            _databaseService.goOpen(
-                firstName: userData.firstName,
-                status: userData.status,
-                position: position
-            );
-          });
-      } else {
-        if (_locationSub != null) {
-          _locationSub.pause();
-        }
-      }
-
       return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              title: Text('Loci'),
-              backgroundColor: Colors.blue,
-              elevation: 0.0,
-              actions: <Widget>[
-                Container(
-                  height: 15.0,
-                  width: 15.0,
-                  decoration: BoxDecoration(
-                    color: Constants.sliderColor[userData.openness ?? 0.0],
-                    shape: BoxShape.circle,
+          length: 2,
+          child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                title: Text('Loci'),
+                backgroundColor: Colors.blue,
+                elevation: 0.0,
+                actions: <Widget>[
+                  Container(
+                    height: 15.0,
+                    width: 15.0,
+                    decoration: BoxDecoration(
+                      color: Constants.sliderColor[userData.openness ?? 0.0],
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                IconButton(
-                    icon: Icon(Icons.account_circle, color: Colors.black,),
-                    onPressed: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Profile())
-                      );
-                    })
-              ],
-              bottom: TabBar(
-                tabs: <Widget>[
-                  Tab(icon: Icon(Icons.chat)),
-                  Tab(icon: Icon(Icons.near_me)),
+                  IconButton(
+                      icon: Icon(Icons.account_circle, color: Colors.black,),
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Profile())
+                        );
+                      })
                 ],
+                bottom: TabBar(
+                  tabs: <Widget>[
+                    Tab(icon: Icon(Icons.chat)),
+                    Tab(icon: Icon(Icons.near_me)),
+                  ],
+                ),
               ),
-            ),
-            body: StreamProvider<UserLocation> (
-              create: (_) => DatabaseService(uid: user.uid).streamThisUserLocation(),
-              child: StreamProvider<UserData> (
-                create: (_) => DatabaseService(uid: user.uid).streamThisUserData(),
-                child: TabBarView(
-                    children: [
-                      HomeTab(),
-                      MapTab()
-                    ]
-                  )
-              ),
-            )
-        )
+              body: StreamProvider<UserLocation>(
+                create: (_) =>
+                    DatabaseService(uid: user.uid).streamThisUserLocation(),
+                child: StreamProvider<UserData>(
+                    create: (_) =>
+                        DatabaseService(uid: user.uid).streamThisUserData(),
+                    child: TabBarView(
+                        children: [
+                          HomeTab(),
+                          MapTab()
+                        ]
+                    )
+                ),
+              )
+          )
       );
     } else {
       return Loading();
     }
   }
+
+  // one-off on init write to locations collection
+  void _updatePos() async {
+    try {
+      Position pos = await _locationService.getPosition();
+      _databaseService.updateLocationWithGeo(pos);
+    } catch(e) {
+      print(e.toString());
+    }
+  }
+
 }

@@ -26,8 +26,13 @@ class LocationService {
   }
 
   Future<Position> getPosition() async {
-    return await _geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    try {
+      return await _geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.bestForNavigation);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
   }
 
   Future<double> distanceFromMe(Position myPos, double lat, double long) async {

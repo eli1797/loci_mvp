@@ -318,7 +318,7 @@ class DatabaseService {
 
 
 
-// read: https://stackoverflow.com/questions/52636766/how-to-query-firestore-document-inside-streambuilder-and-update-the-listview
+  // read: https://stackoverflow.com/questions/52636766/how-to-query-firestore-document-inside-streambuilder-and-update-the-listview
 
   // Stream a user by UId
   Stream streamUserDataByUIdList(List userUids) async* {
@@ -426,9 +426,5 @@ class DatabaseService {
   GeoFirePoint _createGeoFirePointFromPosition (Position position) {
     return geo.point(latitude: position.latitude, longitude: position.longitude);
   }
-
-  // Watch position (Geolocator?) and on changed stream to firestore
-  //@TODO: Watch position ^
-
 
 }
