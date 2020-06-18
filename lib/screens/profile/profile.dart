@@ -97,6 +97,7 @@ class _ProfileState extends State<Profile> {
                               ),
                               initialValue: userData.firstName,
                               onFieldSubmitted: (val) async {
+                                //@Todo: validation on this and status text entry
                                 await _databaseService.updateFirstName(
                                     val);
                               },
