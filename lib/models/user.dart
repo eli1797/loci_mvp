@@ -25,7 +25,7 @@ class UserData {
 /// UserLocation
 /// Data model for locations collection
 ///
-/// Not currently in use in app
+/// Used to center the map on the users location
 class UserLocation {
 
   final String uid;
