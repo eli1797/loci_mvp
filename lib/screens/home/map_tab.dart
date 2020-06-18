@@ -104,7 +104,7 @@ class _MapTabState extends State<MapTab> {
               _mapsController = controller;
             });
           },
-          scrollGesturesEnabled: true,
+          scrollGesturesEnabled: false,
           mapToolbarEnabled: false,
           markers: userData.openness == 2.0 ?  Set<Marker>.of(markers.values) : null,
         ),
