@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/screens/authenticate/authenticate.dart';
 import 'package:mvp/screens/home/home_wrapper.dart';
-import 'package:mvp/services/database.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 Wrapper listens for auth changes and chooses what to show accordingly
