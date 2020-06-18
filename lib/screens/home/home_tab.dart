@@ -14,23 +14,9 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
 
-
-  DatabaseService _databaseService;
-  final LocationService _locationService = LocationService();
-
-  final _formKey = GlobalKey<FormState>();
-  final _controller = TextEditingController();
-
-  @override
-  void dispose(){
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    _databaseService = DatabaseService(uid: user.uid);
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
