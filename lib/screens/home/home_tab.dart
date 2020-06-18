@@ -23,7 +23,7 @@ class _HomeTabState extends State<HomeTab> {
       child: Column(
         children: <Widget>[
           SizedBox(height: 20.0),
-          Text("Howdy")
+          Text("Howdy!"),
         ],
       ),
     );
