@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mvp/models/user.dart';
 import 'package:mvp/services/database.dart';
-import 'package:mvp/services/location.dart';
+import 'package:mvp/shared/constants.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math.dart';
@@ -18,24 +17,30 @@ class MapTab extends StatefulWidget {
 
 class _MapTabState extends State<MapTab> {
 
-  final double EARTHRADIUS = 6366198;
-
+  /// GoogleMapsController
   GoogleMapController _mapsController;
 
-  final LocationService _locationService = LocationService();
+  /// Service that enables interaction with Cloud Firestore
   DatabaseService _databaseService;
 
+  /// Initial position of the camera; required by GoogleMaps Widget
   CameraPosition _startPos;
-  CameraTargetBounds _cameraTargetBounds;
 
+  /// Map MarkerId to marker or Open user data tied to that marker
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<MarkerId, OpenUser> markerData = <MarkerId, OpenUser>{};
 
+  /// Subscription to List<OpenUser> from Open Collection
   StreamSubscription _openSub;
+
+  /// State holder, true if userLocation is null
+  bool _hasNoLocation;
 
   @override
   void initState() {
     super.initState();
+
+    // Create a DatabaseService instance and subscribe to the OpenUsers stream
     _databaseService = DatabaseService();
     _openSub = _databaseService.streamOpenUsers().listen((event) {
       _drawOpenUsers(event);
@@ -45,6 +50,7 @@ class _MapTabState extends State<MapTab> {
   @override
   void dispose(){
     try {
+      // cancel the subscription to the OpenUsers stream
       _openSub.cancel();
     } catch(e) {
       print(e.toString());
@@ -52,106 +58,23 @@ class _MapTabState extends State<MapTab> {
     super.dispose();
   }
 
-  void _setupCamera(UserLocation userLocation) {
-    // set the camera start position to be on the user
-    _startPos = _createCameraPositionFromGP(userLocation.geoPoint);
-
-    // set the camera bounds
-    //_cameraTargetBounds = _createMapBoundsFromGeoPoint(userData.gp, 50);
-  }
-
-  void _drawOpenUsers(List<OpenUser> openUserList) {
-    try {
-      print("Drawing");
-
-      Map<MarkerId, Marker> updateMarkers = <MarkerId, Marker>{};
-      Map<MarkerId, OpenUser> updateMarkerData = <MarkerId, OpenUser>{};
-
-      openUserList.forEach((user) {
-        print(user.firstName);
-
-        //Read: https://infinum.com/the-capsized-eight/creating-custom-markers-on-google-maps-in-flutter-apps
-        //@Todo: Make custom markers with ^ and on tapped bring up a sheet from the bottom with pic, name, status, etc
-
-        final MarkerId markerId = MarkerId(user.uid);
-
-        final Marker newMarker = Marker(
-          markerId: markerId,
-          position: LatLng(user.geoPoint.latitude, user.geoPoint.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(210.0),
-          onTap: () {
-            _onMarkerTapped(markerId);
-          },
-        );
-
-        updateMarkerData[markerId] = user;
-        updateMarkers[markerId] = newMarker;
-      });
-
-      setState(() {
-        markers = updateMarkers;
-        markerData = updateMarkerData;
-      });
-
-    } catch(e) {
-      print(e.toString());
-    }
-  }
-
-  void _onMarkerTapped(MarkerId markerId) {
-    print("Marker Tapped");
-    try {
-      OpenUser openUser = markerData[markerId];
-      showModalBottomSheet(context: context, builder: (context) {
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-          child: Column(
-              children: <Widget>[
-              SizedBox(height: 20.0),
-              CircleAvatar(
-//                backgroundColor: Colors.blue,
-                radius: 50.0,
-                child: Text(openUser.firstName),
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                openUser.firstName,
-                style: TextStyle(fontSize: 22.0),
-              ),
-              SizedBox(height: 20.0),
-              Text(openUser.status),
-            ]
-          )
-        );
-      });
-    } catch(e) {
-      print(e.toString());
-      showModalBottomSheet(context: context, builder: (context) {
-        return Container(
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20.0),
-                Text("Whoops! Failed to get this person")
-              ]
-            )
-        );
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
 
-
-
+    // Get user information from Providers in home.dart
     final userLocation = Provider.of<UserLocation>(context);
     final userData = Provider.of<UserData>(context);
 
-    if (userLocation != null || userData != null) {
-      _setupCamera(userLocation);
+    // Check for userLocation, if not the map cannot be built
+    if (userLocation != null) {
+      _setupCamera(userLocation.geoPoint);
+      _hasNoLocation = false;
+    } else {
+      _hasNoLocation = true;
+    }
 
+    // Only stream other open users if this users is open
+    if (userData != null) {
       if (userData.openness == 2.0) {
         if (_openSub != null && _openSub.isPaused) {
           _openSub.resume();
@@ -162,7 +85,8 @@ class _MapTabState extends State<MapTab> {
         }
       }
 
-      return Container(
+      // If a user has a location build the map, otherwise show the loading screen
+      return _hasNoLocation ? Loading() : Container(
         height: MediaQuery
             .of(context)
             .size
@@ -187,6 +111,104 @@ class _MapTabState extends State<MapTab> {
       );
     } else {
       return Loading();
+    }
+  }
+
+  /// Create the initial camera position
+  bool _setupCamera(GeoPoint geoPoint) {
+    try {
+      // set the camera start position to be on the user
+      _startPos = _createCameraPositionFromGP(geoPoint);
+      return true;
+    } catch(e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  /// Draws markers, updates both Marker Maps based on events in _openSub
+  void _drawOpenUsers(List<OpenUser> openUserList) {
+    try {
+      print("Drawing");
+
+      /// Create new temp maps to hold the new info
+      Map<MarkerId, Marker> updateMarkers = <MarkerId, Marker>{};
+      Map<MarkerId, OpenUser> updateMarkerData = <MarkerId, OpenUser>{};
+
+      openUserList.forEach((user) {
+        print(user.firstName);
+
+        //Read: https://infinum.com/the-capsized-eight/creating-custom-markers-on-google-maps-in-flutter-apps
+        //@Todo: Make custom markers with ^
+
+        /// Create a marker ID
+        final MarkerId markerId = MarkerId(user.uid);
+
+        /// Create a new Marker
+        final Marker newMarker = Marker(
+          markerId: markerId,
+          position: LatLng(user.geoPoint.latitude, user.geoPoint.longitude),
+          icon: BitmapDescriptor.defaultMarkerWithHue(210.0),
+          onTap: () {
+            _onMarkerTapped(markerId);
+          },
+        );
+
+        // Fill in the Maps with this marker and associated OpenUser data.
+        updateMarkerData[markerId] = user;
+        updateMarkers[markerId] = newMarker;
+      });
+
+      // Update the state with the new maps, will redraw markers
+      setState(() {
+        markers = updateMarkers;
+        markerData = updateMarkerData;
+      });
+
+    } catch(e) {
+      print(e.toString());
+    }
+  }
+
+  /// Shows bottom modal sheet with OpenUser data on tap
+  void _onMarkerTapped(MarkerId markerId) {
+    print("Marker Tapped");
+    try {
+      OpenUser openUser = markerData[markerId];
+      showModalBottomSheet(context: context, builder: (context) {
+        return Container(
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+            child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20.0),
+                  CircleAvatar(
+                    radius: 50.0,
+                    child: Text(openUser.firstName),
+                  ),
+                  SizedBox(height: 20.0),
+                  Text(
+                    openUser.firstName,
+                    style: TextStyle(fontSize: 22.0),
+                  ),
+                  SizedBox(height: 20.0),
+                  Text(openUser.status),
+                ]
+            )
+        );
+      });
+    } catch(e) {
+      print(e.toString());
+      showModalBottomSheet(context: context, builder: (context) {
+        return Container(
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+            child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20.0),
+                  Text("Whoops! Failed to get this person")
+                ]
+            )
+        );
+      });
     }
   }
 
@@ -216,14 +238,14 @@ class _MapTabState extends State<MapTab> {
 
   double _meterToLongitude(double meterToEast, double latitude) {
     double latArc = radians(latitude);
-    double radius = cos(latArc) * EARTHRADIUS;
+    double radius = cos(latArc) * Constants.EARTHRADIUS;
     double rad = meterToEast / radius;
     return degrees(rad);
   }
 
 
   double _meterToLatitude(double meterToNorth) {
-    double rad = meterToNorth / EARTHRADIUS;
+    double rad = meterToNorth / Constants.EARTHRADIUS;
     return degrees(rad);
   }
 }

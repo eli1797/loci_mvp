@@ -33,10 +33,12 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _locationService.checkPermission();
-//    _locationSub = _locationService.positionStream().listen((Position position) {
-//      print("Location changed");
-//      _databaseService.updateLocationWithGeo(position);
-//    });
+    updatePos();
+  }
+
+  updatePos() async {
+    Position pos = await _locationService.getPosition();
+    _databaseService.updateLocationWithGeo(pos);
   }
 
   @override
@@ -68,9 +70,11 @@ class _HomeState extends State<Home> {
           _locationSub.resume();
         }
 
-        _locationSub = _locationService.positionStream(distanceFilter: 2).listen((Position position) {
+        _locationSub = _locationService.positionStream(distanceFilter: 5).listen((Position position) {
             print("Location changed");
-//              _databaseService.updateLocationWithGeo(position);
+            // @TODO: Fewer writes here?
+            // Currently doing two writes everytime location changes
+            _databaseService.updateLocationWithGeo(position);
             _databaseService.goOpen(
                 firstName: userData.firstName,
                 status: userData.status,
