@@ -37,49 +37,7 @@ class _HomeTabState extends State<HomeTab> {
       child: Column(
         children: <Widget>[
           SizedBox(height: 20.0),
-          RaisedButton(
-            color: Colors.blue,
-            child: Text('Update Location'),
-            onPressed: () async {
-              Position pos = await _locationService.getPosition();
-              await _databaseService.updateLocationWithGeo(pos);
-            },
-          ),
-          SizedBox(height: 20.0),
-          Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Friend First Name',
-              ),
-              validator: (val) {
-                if (val.isEmpty) {
-                  return 'Enter a name';
-                } else {
-                  return null;
-                }
-              },
-            ),
-          ),
-          SizedBox(height: 20.0),
-          RaisedButton(
-            color: Colors.blue,
-            child: Text('Add friend by UID'),
-            onPressed: () async {
-              print("_currentFriendName: " + _controller.text);
-              await _databaseService.addFriendByUID(_controller.text);
-              _controller.clear();
-            },
-          ),
-          SizedBox(height: 20.0),
-          RaisedButton(
-            color: Colors.blue,
-            child: Text('Query My Friends'),
-            onPressed: () async {
-              print("Pressed");
-            },
-          ),
+          Text("Howdy")
         ],
       ),
     );
