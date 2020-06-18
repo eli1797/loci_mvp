@@ -106,7 +106,7 @@ class _MapTabState extends State<MapTab> {
           },
           scrollGesturesEnabled: true,
           mapToolbarEnabled: false,
-          markers: Set<Marker>.of(markers.values),
+          markers: userData.openness == 2.0 ?  Set<Marker>.of(markers.values) : null,
         ),
       );
     } else {
