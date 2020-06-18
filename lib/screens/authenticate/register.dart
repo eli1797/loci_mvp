@@ -3,7 +3,6 @@ import 'package:mvp/models/user.dart';
 import 'package:mvp/services/auth.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
 
@@ -16,20 +15,23 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
+  /// Service providing connection to Firebase Auth
   final AuthService _authService = AuthService();
+
+  /// Key for email and password form
   final _formKey = GlobalKey<FormState>();
+
+  /// State holder for whether or not to show the loading widget
   bool _loading = false;
 
-  // text field states
+  /// Text field states
   String _email = '';
   String _password = '';
-  String error = '';
+  String _error = '';
 
   @override
   Widget build(BuildContext context) {
-
-    final user = Provider.of<User>(context);
-
+    // Show loading widget or Sign-in depending on state
     return _loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -49,9 +51,6 @@ class _RegisterState extends State<Register> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   hintText: "Email",
-//                    enabledBorder: OutlineInputBorder(
-//                      borderSide: BorderSide(color: Colors.blue, width: 2.0)
-//                    ),
                 ),
                 validator: (val) {
                   if (val.isEmpty) {
@@ -97,22 +96,23 @@ class _RegisterState extends State<Register> {
                     dynamic result = await _authService.registerEmailPass(_email.trim(), _password.trim());
                     if (result == null) {
                       setState(() {
-                        error = 'Please supply a valid email';
+                        _error = 'Please supply a valid email';
                         _loading = false;
                       });
                     }
                   }
                 }),
               Text(
-                error,
+                _error,
                 style: TextStyle(color:  Colors.red, fontSize: 12.0),
               ),
               SizedBox(height: 5.0),
               FlatButton(
-                 child: Text('Already have an account? Sign in'),
-                  onPressed: () {
-                    widget.toggleView();
-                  }),
+                child: Text('Already have an account? Sign in'),
+                onPressed: () {
+                  widget.toggleView();
+                }
+              ),
             ],
           ),
         ),
