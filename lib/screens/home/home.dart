@@ -112,7 +112,7 @@ class _HomeState extends State<Home> {
               ],
               bottom: TabBar(
                 tabs: <Widget>[
-                  Tab(icon: Icon(Icons.home)),
+                  Tab(icon: Icon(Icons.chat)),
                   Tab(icon: Icon(Icons.near_me)),
                 ],
               ),
