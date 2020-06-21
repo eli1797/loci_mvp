@@ -33,6 +33,15 @@ class _ProfileState extends State<Profile> {
   /// Chip selected
   bool _single;
 
+  List<String> chipList = [
+    "Recycled",
+    "Vegetarian",
+    "Skilled",
+    "Energetic",
+    "Friendly",
+    "Luxurious"
+  ];
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -144,16 +153,9 @@ class _ProfileState extends State<Profile> {
                                     await _databaseService.goHidden();
                                   }
                                 }),
-                            ChoiceChip(
-                                label: Text("Single"),
-                                selected: _single ?? true,
-                                onSelected: (val) {
-                                  print("selected");
-                                  setState(() {
-                                    _single = val;
-                                  });
-                                }
-                            ),
+                            Container(
+                              child: ChoiceChipsWidget(chipList),
+                            )
                           ],
                         ),
                       )
@@ -164,5 +166,52 @@ class _ProfileState extends State<Profile> {
             }
           });
     }
+  }
+}
+
+class ChoiceChipsWidget extends StatefulWidget {
+
+  final List<String> reportList;
+
+  ChoiceChipsWidget(this.reportList);
+
+  @override
+  _ChoiceChipsWidgetState createState() => _ChoiceChipsWidgetState();
+}
+
+class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
+  String selectedChoice = "";
+
+  _buildChoiceList() {
+    List<Widget> choices = List();
+    widget.reportList.forEach((item) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: ChoiceChip(
+          label: Text(item),
+          labelStyle: TextStyle(
+              color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.bold),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          backgroundColor: Color(0xffededed),
+          selectedColor: Color(0xffffc107),
+          selected: selectedChoice == item,
+          onSelected: (selected) {
+            setState(() {
+              selectedChoice = item;
+            });
+          },
+        ),
+      ));
+    });
+    return choices;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: _buildChoiceList(),
+    );
   }
 }
