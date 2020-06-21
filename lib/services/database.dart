@@ -76,17 +76,31 @@ class DatabaseService {
     }
   }
 
-//  /// Update this user's tags
-//  Future updateTags(List<String> tags) async {
-//    try {
-//      return await _userCollection.document(this.uid).setData({
-//        'tags': tags,
-//      }, merge: true);
-//    } catch(e) {
-//      print(e.toString());
-//      return null;
-//    }
-//  }
+  /// Activate a tag in this user's tags
+  Future activateTag(String tag) async {
+    try {
+      Map<String, bool> tagMap = {tag: true};
+      return await _userCollection.document(this.uid).setData({
+        'tags': tagMap,
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  /// Deactivate a tag in this user's tags
+  Future deactivateTag(String tag) async {
+    try {
+      Map<String, bool> tagMap = {tag: false};
+      return await _userCollection.document(this.uid).setData({
+        'tags': tagMap,
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
   /// Stream this users UserData
   Stream<UserData> streamThisUserData() {

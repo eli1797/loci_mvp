@@ -158,10 +158,10 @@ class _ProfileState extends State<Profile> {
                                 spacing: 5.0,
                                 runSpacing: 5.0,
                                 children: <Widget>[
-                                  ChoiceChipWidget("Eli"),
-                                  ChoiceChipWidget("Zach"),
-                                  ChoiceChipWidget("Jackson"),
-                                  ChoiceChipWidget("Richard"),
+                                  ChoiceChipWidget("One", _databaseService),
+                                  ChoiceChipWidget("Two", _databaseService),
+                                  ChoiceChipWidget("Three", _databaseService),
+                                  ChoiceChipWidget("Four", _databaseService),
                                 ],
                               )
                             )
@@ -180,9 +180,14 @@ class _ProfileState extends State<Profile> {
 
 class ChoiceChipWidget extends StatefulWidget {
 
+  /// Title and value the chip represents
   final String chipVal;
 
-  ChoiceChipWidget(this.chipVal);
+  /// DatabaseService
+  DatabaseService _databaseService;
+
+  /// Constructor
+  ChoiceChipWidget(this.chipVal, this._databaseService);
 
   @override
   _ChoiceChipWidgetState createState() => _ChoiceChipWidgetState();
@@ -190,6 +195,7 @@ class ChoiceChipWidget extends StatefulWidget {
 
 class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
 
+  /// Stateholder for whether or not the chip is selected
   bool _selected;
 
   @override
@@ -207,6 +213,11 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
       onSelected: (val) {
         setState(() {
           _selected = val;
+          if (val) {
+            widget._databaseService.activateTag(widget.chipVal);
+          } else {
+            widget._databaseService.deactivateTag(widget.chipVal);
+          }
         });
       },
     );
