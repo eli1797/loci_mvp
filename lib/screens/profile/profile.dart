@@ -154,7 +154,16 @@ class _ProfileState extends State<Profile> {
                                   }
                                 }),
                             Container(
-                              child: ChoiceChipsWidget(chipList),
+                              child: Wrap(
+                                spacing: 5.0,
+                                runSpacing: 5.0,
+                                children: <Widget>[
+                                  ChoiceChipWidget("Eli"),
+                                  ChoiceChipWidget("Zach"),
+                                  ChoiceChipWidget("Jackson"),
+                                  ChoiceChipWidget("Richard"),
+                                ],
+                              )
                             )
                           ],
                         ),
@@ -169,53 +178,39 @@ class _ProfileState extends State<Profile> {
   }
 }
 
-class ChoiceChipsWidget extends StatefulWidget {
+class ChoiceChipWidget extends StatefulWidget {
 
-  final List<String> reportList;
+  final String chipVal;
 
-  ChoiceChipsWidget(this.reportList);
+  ChoiceChipWidget(this.chipVal);
 
   @override
-  _ChoiceChipsWidgetState createState() => _ChoiceChipsWidgetState();
+  _ChoiceChipWidgetState createState() => _ChoiceChipWidgetState();
 }
 
-class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
-  List<String> selectedChoices = [];
+class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
 
-  _buildChoiceList() {
-    List<Widget> choices = List();
-    widget.reportList.forEach((item) {
-      choices.add(Container(
-        padding: const EdgeInsets.all(2.0),
-        child: ChoiceChip(
-          label: Text(item),
-          labelStyle: TextStyle(
-              color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          backgroundColor: Color(0xffededed),
-          selectedColor: Colors.blue,
-          selected: selectedChoices.contains(item),
-          onSelected: (selected) {
-            setState(() {
-              if (selected) {
-                selectedChoices.add(item);
-              } else {
-                selectedChoices.remove(item);
-              }
-            });
-          },
-        ),
-      ));
-    });
-    return choices;
-  }
+  bool _selected;
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: _buildChoiceList(),
+    return ChoiceChip(
+      label: Text(widget.chipVal),
+      labelStyle: TextStyle(
+          color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.bold),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      backgroundColor: Color(0xffededed),
+      selectedColor: Colors.blue,
+      selected: _selected ?? false,
+      onSelected: (val) {
+        setState(() {
+          _selected = val;
+        });
+      },
     );
   }
 }
+
+
