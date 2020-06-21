@@ -57,7 +57,6 @@ class _ProfileState extends State<Profile> {
           stream: _databaseService.streamThisUserData(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              print("hey");
               // create UserData model from Stream
               UserData userData = snapshot.data;
               // set _sliderVal starting value based on what's in the cloud
@@ -220,12 +219,12 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
           selectedColor: Colors.blue,
           selected: element.value ?? false,
           onSelected: (val) {
+            if (val) {
+              widget._databaseService.activateTag(element.key);
+            } else {
+              widget._databaseService.deactivateTag(element.key);
+            }
             setState(() {
-              if (val) {
-                widget._databaseService.activateTag(element.key);
-              } else {
-                widget._databaseService.deactivateTag(element.key);
-              }
               _chipVals.update(element.key, (value) => val);
             });
           },
