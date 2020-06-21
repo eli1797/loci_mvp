@@ -102,6 +102,16 @@ class DatabaseService {
     }
   }
 
+  /// Deactivate a tag in this user's tags
+  Future getTag(String tag) async {
+    try {
+      return await _userCollection.document(this.uid).get().then((value) => value['tags']['tag']) ?? false;
+    } catch(e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
   /// Stream this users UserData
   Stream<UserData> streamThisUserData() {
     try {

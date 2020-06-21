@@ -153,6 +153,7 @@ class _ProfileState extends State<Profile> {
                                     await _databaseService.goHidden();
                                   }
                                 }),
+                            SizedBox(height: 10.0),
                             Container(
                               child: Wrap(
                                 spacing: 5.0,
@@ -183,7 +184,7 @@ class ChoiceChipWidget extends StatefulWidget {
   /// Title and value the chip represents
   final String chipVal;
 
-  /// DatabaseService
+  /// DatabaseService for interacting with Cloud Firestore
   DatabaseService _databaseService;
 
   /// Constructor
