@@ -180,7 +180,7 @@ class ChoiceChipsWidget extends StatefulWidget {
 }
 
 class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
-  String selectedChoice = "";
+  List<String> selectedChoices = [];
 
   _buildChoiceList() {
     List<Widget> choices = List();
@@ -195,11 +195,15 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           backgroundColor: Color(0xffededed),
-          selectedColor: Color(0xffffc107),
-          selected: selectedChoice == item,
+          selectedColor: Colors.blue,
+          selected: selectedChoices.contains(item),
           onSelected: (selected) {
             setState(() {
-              selectedChoice = item;
+              if (selected) {
+                selectedChoices.add(item);
+              } else {
+                selectedChoices.remove(item);
+              }
             });
           },
         ),
