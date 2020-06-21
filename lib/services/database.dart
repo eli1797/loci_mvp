@@ -103,12 +103,14 @@ class DatabaseService {
   }
 
   /// Deactivate a tag in this user's tags
-  Future getTag(String tag) async {
+  Stream<Map<String, bool>> streamTags() {
     try {
-      return await _userCollection.document(this.uid).get().then((value) => value['tags']['tag']) ?? false;
+      return _userCollection.document(this.uid).snapshots().map((docSnap) {
+        return Map.from(docSnap.data['tags']);
+      });
     } catch(e) {
       print(e.toString());
-      return false;
+      return null;
     }
   }
 

@@ -201,27 +201,38 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ChoiceChip(
-      label: Text(widget.chipVal),
-      labelStyle: TextStyle(
-          color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.bold),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      backgroundColor: Color(0xffededed),
-      selectedColor: Colors.blue,
-      selected: _selected ?? false,
-      onSelected: (val) {
-        setState(() {
-          _selected = val;
-          if (val) {
-            widget._databaseService.activateTag(widget.chipVal);
-          } else {
-            widget._databaseService.deactivateTag(widget.chipVal);
+    return StreamBuilder<Map<String, bool>>(
+        stream: widget._databaseService.streamTags(),
+        builder: (context, snapshot) {
+          print("Howdy" + snapshot.toString());
+          if (snapshot.hasData) {
+            _selected = snapshot.data[widget.chipVal] ?? false;
           }
+
+          return ChoiceChip(
+            label: Text(widget.chipVal),
+            labelStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            backgroundColor: Color(0xffededed),
+            selectedColor: Colors.blue,
+            selected: _selected ?? false,
+            onSelected: (val) {
+              setState(() {
+                _selected = val;
+                if (val) {
+                  widget._databaseService.activateTag(widget.chipVal);
+                } else {
+                  widget._databaseService.deactivateTag(widget.chipVal);
+                }
+              });
+            },
+          );
         });
-      },
-    );
   }
 }
 
