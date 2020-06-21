@@ -76,6 +76,18 @@ class DatabaseService {
     }
   }
 
+//  /// Update this user's tags
+//  Future updateTags(List<String> tags) async {
+//    try {
+//      return await _userCollection.document(this.uid).setData({
+//        'tags': tags,
+//      }, merge: true);
+//    } catch(e) {
+//      print(e.toString());
+//      return null;
+//    }
+//  }
+
   /// Stream this users UserData
   Stream<UserData> streamThisUserData() {
     try {

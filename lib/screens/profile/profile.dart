@@ -30,6 +30,9 @@ class _ProfileState extends State<Profile> {
   /// State holder for openness slider
   double _sliderVal;
 
+  /// Chip selected
+  bool _single;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -140,7 +143,17 @@ class _ProfileState extends State<Profile> {
                                     print("going hidden");
                                     await _databaseService.goHidden();
                                   }
-                                })
+                                }),
+                            ChoiceChip(
+                                label: Text("Single"),
+                                selected: _single ?? true,
+                                onSelected: (val) {
+                                  print("selected");
+                                  setState(() {
+                                    _single = val;
+                                  });
+                                }
+                            ),
                           ],
                         ),
                       )
