@@ -50,6 +50,10 @@ dependencies:
     git: git://github.com/DarshanGowda0/GeoFlutterFire.git
 
 
+  # game
+  flame: ^0.22.1
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -5,6 +5,8 @@ import 'package:mvp/services/database.dart';
 import 'package:mvp/services/location.dart';
 import 'package:mvp/shared/loading.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui';
+import 'package:flame/game.dart';
 
 class HomeTab extends StatefulWidget {
 
@@ -18,14 +20,19 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 20.0),
-          Text("Howdy!"),
-        ],
-      ),
-    );
+    LangawGame game = LangawGame();
+    return game.widget;
   }
+}
+
+
+
+class LangawGame extends Game {
+  Size screenSize;
+
+  void render(Canvas canvas) {}
+
+  void update(double t) {}
+
+  void resize(Size size) {}
 }
