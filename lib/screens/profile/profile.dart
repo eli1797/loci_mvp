@@ -154,8 +154,9 @@ class _ProfileState extends State<Profile> {
                                   }
                                 }),
                             SizedBox(height: 10.0),
-                            Container(
-                                child: ChoiceChipsWidget(chipList, _databaseService),
+                            Flexible(
+                              child: Container(
+                                  child: ChoiceChipsWidget(chipList, _databaseService),
 //                              child: Wrap(
 //                                spacing: 5.0,
 //                                runSpacing: 5.0,
@@ -166,6 +167,7 @@ class _ProfileState extends State<Profile> {
 //                                  ChoiceChipWidget("Four", _databaseService),
 //                                ],
 //                              )
+                              ),
                             )
                           ],
                         ),
@@ -244,11 +246,13 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
         if (snapshot.hasData) {
           print(snapshot.toString());
           _chipVals = LinkedHashMap.from(snapshot.data);
-        }
 
-        return Wrap(
+          return Wrap(
             children: _buildChoiceChips(),
-        );
+          );
+        } else {
+          return Wrap();
+        }
 
       });
   }
