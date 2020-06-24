@@ -44,22 +44,15 @@ class BoxGame extends Game with TapDetector {
   double newX = 0;
   double newY = 0;
 
-  Rect boxRect;
+  RectObj obj;
 
   BoxGame(this.screenSize) {
-    // draw a box
-    this.boxRect = Rect.fromLTWH(
-        0,
-        0,
-        50,
-        50
-    );
+    spawnObj();
   }
 
-
-
-  Paint boxPaint = Paint();
-
+  void spawnObj() {
+    obj = RectObj(this, 0, 0);
+  }
 
   void render(Canvas canvas) {
     // draw a rectangle for the background
@@ -71,8 +64,7 @@ class BoxGame extends Game with TapDetector {
     canvas.drawRect(bgRect, bgPaint);
 
     //draw the box
-    boxPaint.color = Colors.orange;
-    canvas.drawRect(boxRect, boxPaint);
+    obj.render(canvas);
   }
 
   void onTapDown(TapDownDetails d) {
@@ -81,24 +73,14 @@ class BoxGame extends Game with TapDetector {
     print(d.localPosition.dx);
     print(d.localPosition.dy);
 
-//    Offset offset = Offset(d.localPosition.dx, d.localPosition.dy);
-////    boxRect.translate(d.localPosition.dx, d.localPosition.dy);
-    this.newX = d.localPosition.dx.toDouble();
-    this.newY = d.localPosition.dy.toDouble();
+    obj.x = d.localPosition.dx.toDouble();
+    obj.y = d.localPosition.dy.toDouble();
 
+    this.obj.rectObj = Rect.fromLTWH(obj.x, obj.y, 30, 30);
   }
 
   void update(double t) {
-    if (this.newX != 0.0 && this.newY != 0.0) {
-      print("Hi");
-      this.boxRect = boxRect.translate(newX, newY);
-    }
-
-    this.newX = 0.0;
-    this.newY = 0.0;
-
-
-    print(this.boxRect.toString());
+    obj.update(t);
   }
 
 }
@@ -109,19 +91,20 @@ class RectObj {
   Paint rectPaint;
   double x;
   double y;
+  double newX;
+  double newY;
   BoxGame boxGame;
 
   RectObj(this.boxGame, double x, double y) {
-    rectObj = Rect.fromLTWH(x, y, 30, 30);
-    rectPaint = Paint();
-    rectPaint.color = Color(0xff6ab04c);
+    this.rectObj = Rect.fromLTWH(x, y, 30, 30);
+    this.rectPaint = Paint();
+    this.rectPaint.color = Color(0xff6ab04c);
   }
 
   void render(Canvas c) {
-    c.drawRect(rectObj, rectPaint);
+    c.drawRect(this.rectObj, this.rectPaint);
   }
 
   void update(double t) {
-
   }
 }
