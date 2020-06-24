@@ -5,6 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mvp/models/user.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 
+/// DatabaseService
+/// 
+/// This class handles interactions between a user's app and cloud firestore
+/// It enables documentation creation, one-off reads and writes, and can generate streams
 class DatabaseService {
 
   /// Firestore collection references
