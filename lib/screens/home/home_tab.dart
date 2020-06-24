@@ -27,7 +27,7 @@ class _HomeTabState extends State<HomeTab> {
     flameUtil.setOrientation(DeviceOrientation.portraitUp);
 
     // create an instance of the game
-    BoxGame game = BoxGame(screenSize: MediaQuery.of(context).size);
+    BoxGame game = BoxGame(MediaQuery.of(context).size);
 
     // return the game as a widget
     return game.widget;
@@ -41,7 +41,25 @@ class BoxGame extends Game with TapDetector {
   Size screenSize;
   bool hasWon = false;
 
-  BoxGame({ this.screenSize });
+  double newX = 0;
+  double newY = 0;
+
+  Rect boxRect;
+
+  BoxGame(this.screenSize) {
+    // draw a box
+    this.boxRect = Rect.fromLTWH(
+        0,
+        0,
+        50,
+        50
+    );
+  }
+
+
+
+  Paint boxPaint = Paint();
+
 
   void render(Canvas canvas) {
     // draw a rectangle for the background
@@ -52,22 +70,8 @@ class BoxGame extends Game with TapDetector {
     // fill in the background rectangle
     canvas.drawRect(bgRect, bgPaint);
 
-    // draw a box
-    double screenCenterX = screenSize.width / 2;
-    double screenCenterY = screenSize.height / 2;
-    Rect boxRect = Rect.fromLTWH(
-        screenCenterX - 75,
-        screenCenterY - 75,
-        150,
-        150
-    );
-
-    Paint boxPaint = Paint();
-    if (hasWon) {
-      boxPaint.color = Color(0xff00ff00);
-    } else {
-      boxPaint.color = Color(0xffffffff);
-    }
+    //draw the box
+    boxPaint.color = Colors.orange;
     canvas.drawRect(boxRect, boxPaint);
   }
 
@@ -77,22 +81,47 @@ class BoxGame extends Game with TapDetector {
     print(d.localPosition.dx);
     print(d.localPosition.dy);
 
-    double screenCenterX = screenSize.width / 2;
-    double screenCenterY = screenSize.height / 2;
+//    Offset offset = Offset(d.localPosition.dx, d.localPosition.dy);
+////    boxRect.translate(d.localPosition.dx, d.localPosition.dy);
+    this.newX = d.localPosition.dx.toDouble();
+    this.newY = d.localPosition.dy.toDouble();
 
-    // if you tap inside the box you win
-    if (d.localPosition.dx >= screenCenterX - 75
-        && d.localPosition.dx <= screenCenterX + 75
-        && d.localPosition.dy >= screenCenterY - 75
-        && d.localPosition.dy <= screenCenterY + 75
-    ) {
-      print("set true");
-      hasWon = true;
-    } else {
-      hasWon = false;
-    }
   }
 
-  void update(double t) {}
+  void update(double t) {
+    if (this.newX != 0.0 && this.newY != 0.0) {
+      print("Hi");
+      this.boxRect = boxRect.translate(newX, newY);
+    }
 
+    this.newX = 0.0;
+    this.newY = 0.0;
+
+
+    print(this.boxRect.toString());
+  }
+
+}
+
+class RectObj {
+
+  Rect rectObj;
+  Paint rectPaint;
+  double x;
+  double y;
+  BoxGame boxGame;
+
+  RectObj(this.boxGame, double x, double y) {
+    rectObj = Rect.fromLTWH(x, y, 30, 30);
+    rectPaint = Paint();
+    rectPaint.color = Color(0xff6ab04c);
+  }
+
+  void render(Canvas c) {
+    c.drawRect(rectObj, rectPaint);
+  }
+
+  void update(double t) {
+
+  }
 }
