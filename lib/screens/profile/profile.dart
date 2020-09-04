@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvp/models/user.dart';
@@ -29,6 +31,16 @@ class _ProfileState extends State<Profile> {
 
   /// State holder for openness slider
   double _sliderVal;
+
+  /// Chip selected
+  bool _single;
+
+  List<String> chipList = [
+    "One",
+    "Two",
+    "Three",
+    "Four"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +135,7 @@ class _ProfileState extends State<Profile> {
                                 label: Constants.sliderLabel[_sliderVal],
                                 activeColor: Constants.sliderColor[_sliderVal],
                                 inactiveColor: Constants.sliderColor[_sliderVal],
-                                onChanged: (val) => print(val),
+                                onChanged: (val) => {},
                                 onChangeEnd: (val) async {
                                   setState(() {
                                     _sliderVal = val;
@@ -140,7 +152,23 @@ class _ProfileState extends State<Profile> {
                                     print("going hidden");
                                     await _databaseService.goHidden();
                                   }
-                                })
+                                }),
+                            SizedBox(height: 10.0),
+                            Flexible(
+                              child: Container(
+                                  child: ChoiceChipsWidget(chipList, _databaseService),
+//                              child: Wrap(
+//                                spacing: 5.0,
+//                                runSpacing: 5.0,
+//                                children: <Widget>[
+//                                  ChoiceChipWidget("One", _databaseService),
+//                                  ChoiceChipWidget("Two", _databaseService),
+//                                  ChoiceChipWidget("Three", _databaseService),
+//                                  ChoiceChipWidget("Four", _databaseService),
+//                                ],
+//                              )
+                              ),
+                            )
                           ],
                         ),
                       )
@@ -153,3 +181,140 @@ class _ProfileState extends State<Profile> {
     }
   }
 }
+class ChoiceChipsWidget extends StatefulWidget {
+
+  /// Chip titles
+  List<String> chipList;
+
+  /// DatabaseService for interacting with Cloud Firestore
+  DatabaseService _databaseService;
+
+  /// Constructor
+  ChoiceChipsWidget(this.chipList, this._databaseService);
+
+  @override
+  _ChoiceChipsWidgetState createState() => _ChoiceChipsWidgetState();
+}
+
+class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
+
+  /// Title and active bool for each chip
+  LinkedHashMap<String, bool> _chipVals;
+
+
+  _buildChoiceChips() {
+    List<Widget> choices = List();
+
+    _chipVals.entries.forEach((element) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: ChoiceChip(
+          label: Text(element.key),
+          labelStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          backgroundColor: Color(0xffededed),
+          selectedColor: Colors.blue,
+          selected: element.value ?? false,
+          onSelected: (val) {
+            if (val) {
+              widget._databaseService.activateTag(element.key);
+            } else {
+              widget._databaseService.deactivateTag(element.key);
+            }
+            setState(() {
+              _chipVals.update(element.key, (value) => val);
+            });
+          },
+        ),
+      )
+      );
+    });
+    return choices;
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Map<String, bool>>(
+      stream: widget._databaseService.streamTags(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          print(snapshot.toString());
+          _chipVals = LinkedHashMap.from(snapshot.data);
+
+          return Wrap(
+            children: _buildChoiceChips(),
+          );
+        } else {
+          return Wrap();
+        }
+
+      });
+  }
+}
+
+
+class ChoiceChipWidget extends StatefulWidget {
+
+  /// Title and value the chip represents
+  final String chipVal;
+
+  /// DatabaseService for interacting with Cloud Firestore
+  DatabaseService _databaseService;
+
+  /// Constructor
+  ChoiceChipWidget(this.chipVal, this._databaseService);
+
+  @override
+  _ChoiceChipWidgetState createState() => _ChoiceChipWidgetState();
+}
+
+class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
+
+  /// Stateholder for whether or not the chip is selected
+  bool _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Map<String, bool>>(
+        stream: widget._databaseService.streamTags(),
+        builder: (context, snapshot) {
+          print("Howdy" + snapshot.toString());
+          if (snapshot.hasData) {
+            _selected = snapshot.data[widget.chipVal] ?? false;
+            print("1");
+          }
+
+          return ChoiceChip(
+            label: Text(widget.chipVal),
+            labelStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            backgroundColor: Color(0xffededed),
+            selectedColor: Colors.blue,
+            selected: _selected ?? false,
+            onSelected: (val) {
+              setState(() {
+                _selected = val;
+                if (val) {
+                  widget._databaseService.activateTag(widget.chipVal);
+                } else {
+                  widget._databaseService.deactivateTag(widget.chipVal);
+                }
+              });
+            },
+          );
+        });
+  }
+}
+
+

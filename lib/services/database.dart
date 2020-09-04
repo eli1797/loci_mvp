@@ -76,6 +76,44 @@ class DatabaseService {
     }
   }
 
+  /// Activate a tag in this user's tags
+  Future activateTag(String tag) async {
+    try {
+      Map<String, bool> tagMap = {tag: true};
+      return await _userCollection.document(this.uid).setData({
+        'tags': tagMap,
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  /// Deactivate a tag in this user's tags
+  Future deactivateTag(String tag) async {
+    try {
+      Map<String, bool> tagMap = {tag: false};
+      return await _userCollection.document(this.uid).setData({
+        'tags': tagMap,
+      }, merge: true);
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  /// Deactivate a tag in this user's tags
+  Stream<Map<String, bool>> streamTags() {
+    try {
+      return _userCollection.document(this.uid).snapshots().map((docSnap) {
+        return Map.from(docSnap.data['tags']);
+      });
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   /// Stream this users UserData
   Stream<UserData> streamThisUserData() {
     try {
