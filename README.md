@@ -1,3 +1,4 @@
 # loci_mvp
  
-[![Demo CountPages alpha](https://share.gifyoutube.com/KzB6Gb.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
+![](https://github.com/eli1797/loci_mvp/blob/game_tutorial/assets/images/output.gif)
+
